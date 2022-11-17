@@ -2,18 +2,18 @@
 
 ## TODO
 
-Add callbacks (class?) to Python and Rust to trigger model and send response
-Add dynamic definitions for juniper resolver
-Add inputs and outputs (params and fields API to Python)
-Add doc strings fields to Python API and corresponding Rust bindings 
-Deactivate rust and make all Python code still run transparently with GQL_WRAPPER_ACTIVE unset
-Convert resolver to subscription 
-Test sending a base64 encoded image 
-Add option to send path to image 
-Test with model
-Test as dependency
-Test with defined multiple build targets
-Documentation
+* Add callbacks (class?) to Python and Rust to trigger model and send response
+* Add dynamic definitions for juniper resolver
+* Add inputs and outputs (params and fields API to Python)
+* Add doc strings fields to Python API and corresponding Rust bindings 
+* Deactivate rust and make all Python code still run transparently with GQL_WRAPPER_ACTIVE unset
+* Convert resolver to subscription 
+* Test sending a base64 encoded image 
+* Add option to send path to image 
+* Test with model
+* Test as dependency
+* Test with defined multiple build targets
+* Documentation
 
 Callback example:
 
