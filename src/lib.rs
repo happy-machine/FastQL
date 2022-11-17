@@ -5,7 +5,7 @@ use actix_web::{
     App, HttpRequest, HttpResponse, HttpServer, Responder,
 };
 use actix_web_lab::respond::Html;
-use juniper::http::{graphiql::graphiql_source, GraphQLRequest};
+use juniper::http::{playground::playground_source, GraphQLRequest};
 use juniper::{EmptySubscription, FieldResult, RootNode};
 use pyo3::prelude::*;
 use std::cell::Cell;
@@ -13,22 +13,23 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Mutex;
 use std::thread;
 use std::{io, sync::Arc};
-static GLOBAL_DATA: Mutex<Vec<i32>> = Mutex::new(Vec::new());
+static GLOBAL_DATA: Mutex<Vec<String>> = Mutex::new(Vec::new());
 
 mod schema;
-use crate::schema::{Episode, Human, MutationRoot};
+use crate::schema::{ArtifactType, Model, MutationRoot, Params};
 
 pub struct QueryRoot;
 
 #[juniper::graphql_object]
 impl QueryRoot {
-    fn human(_id: String) -> FieldResult<Human> {
-        Ok(Human {
-            id: "1234".to_owned(),
-            name: "Luke".to_owned(),
-            appears_in: GLOBAL_DATA.lock().unwrap().to_owned(),
-            home_planet: "Mars".to_owned(),
-            age: 43,
+    fn model(_params: Params) -> FieldResult<Model> {
+        Ok(Model {
+            model: _params.model.to_owned(),
+            artifact_type: _params.artifact_type,
+            artifact: _params.artifact.to_owned(),
+            images: GLOBAL_DATA.lock().unwrap().to_owned(),
+            tokens: _params.tokens.to_owned(),
+            prompt: _params.prompt.to_owned(),
         })
     }
 }
@@ -43,7 +44,7 @@ fn wrapper() {
 
     #[get("/graphiql")]
     async fn graphql_playground() -> impl Responder {
-        Html(graphiql_source("/graphql", None))
+        Html(playground_source("/graphql", None))
     }
 
     /// GraphQL endpoint
@@ -88,27 +89,30 @@ fn wrapper() {
         .run()
         .await
     }
+
     #[pyfunction]
     fn init() -> PyResult<String> {
         thread::spawn(move || main());
         Ok("GQLwrapper initialised...".to_string())
     }
-
     #[pyfunction]
-    fn inputs(value: i32) -> () {
+    fn set_params(value: i32) -> () {
+        // do some dynamic crazy.
+    }
+    #[pyfunction]
+    fn set_fields(value: String) -> () {
         GLOBAL_DATA.lock().unwrap().push(value);
     }
-
     #[pyfunction]
-    fn outputs() -> PyResult<i32> {
-        Ok(GLOBAL_DATA.lock().unwrap()[0])
+    fn fields() -> PyResult<String> {
+        Ok(GLOBAL_DATA.lock().unwrap()[0].clone())
     }
 
     #[pymodule]
     fn GQLwrapper(_py: Python, m: &PyModule) -> PyResult<()> {
         m.add_function(wrap_pyfunction!(init, m)?)?;
-        m.add_function(wrap_pyfunction!(inputs, m)?)?;
-        m.add_function(wrap_pyfunction!(outputs, m)?)?;
+        m.add_function(wrap_pyfunction!(set_fields, m)?)?;
+        m.add_function(wrap_pyfunction!(fields, m)?)?;
         Ok(())
     }
 }

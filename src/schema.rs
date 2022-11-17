@@ -1,44 +1,52 @@
 use juniper::{EmptySubscription, FieldResult, RootNode};
 
 #[derive(GraphQLEnum)]
-pub enum Episode {
-    NewHope,
-    Empire,
-    Jedi,
+pub enum ArtifactType {
+  ARTIFACT_NONE,
+  ARTIFACT_IMAGE,
+  ARTIFACT_VIDEO,
+  ARTIFACT_TEXT,
+  ARTIFACT_TOKENS,
+  ARTIFACT_EMBEDDING,
+  ARTIFACT_CLASSIFICATIONS,
+  ARTIFACT_MASK,
 }
 
 use juniper::{GraphQLEnum, GraphQLInputObject, GraphQLObject};
 
 #[derive(GraphQLObject)]
-#[graphql(description = "A humanoid creature in the Star Wars universe")]
-pub struct Human {
-    pub id: String,
-    pub name: String,
-    pub appears_in: Vec<i32>,
-    pub home_planet: String,
-    pub age: i32,
+#[graphql(description = "A stable diffusion model inference")]
+pub struct Model {
+    pub prompt: String,
+    pub artifact: String,
+    pub artifact_type: ArtifactType,
+    pub model: String,
+    pub tokens: Vec<String>,
+    pub images: Vec<String>,
 }
 
 #[derive(GraphQLInputObject)]
-#[graphql(description = "A humanoid creature in the Star Wars universe")]
-struct NewHuman {
-    name: String,
-    appears_in: Vec<i32>,
-    home_planet: String,
-    age: i32,
+#[graphql(description = "Optional params for inference")]
+pub struct Params {
+    pub prompt: String,
+    pub artifact: String,
+    pub artifact_type: ArtifactType,
+    pub model: String,
+    pub tokens:  Vec<String>,
 }
 
 pub struct MutationRoot;
 
 #[juniper::graphql_object]
 impl MutationRoot {
-    fn create_human(new_human: NewHuman) -> FieldResult<Human> {
-        Ok(Human {
-            id: "1234".to_owned(),
-            name: new_human.name,
-            appears_in: new_human.appears_in,
-            home_planet: new_human.home_planet,
-            age: new_human.age,
+    fn create_model(params: Params) -> FieldResult<Model> {
+        Ok(Model {
+            model: "1234".to_owned(),
+            images: vec!["WRET£34t3".to_string(), "WREWRTY£34t3".to_string()],
+            artifact: params.artifact,
+            artifact_type: params.artifact_type,
+            tokens: params.tokens,
+            prompt: params.prompt,
         })
     }
 }
