@@ -3,6 +3,7 @@
 ## TODO
 
 * Add callbacks (class?) to Python and Rust to trigger model and send response
+* Switch to async dependency so we can await on both sides
 * Add dynamic definitions for juniper resolver
 * Add inputs and outputs (params and fields API to Python)
 * Add doc strings fields to Python API and corresponding Rust bindings 
