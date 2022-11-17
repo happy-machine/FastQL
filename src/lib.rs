@@ -14,7 +14,12 @@ use std::sync::Mutex;
 use std::thread;
 use std::{io, sync::Arc};
 static GLOBAL_DATA: Mutex<Vec<String>> = Mutex::new(Vec::new());
-
+type Callback = Arc<Mutex<dyn 'static + FnMut(String, String) + Send + Sync>>;
+// static GLOBAL_CALLBACK: Callback = Arc::new(Mutex::new(|_,_| {}));
+struct LibThreaded {
+    something_threaded: String,
+    callback: Callback,
+}
 mod schema;
 use crate::schema::{ArtifactType, Model, MutationRoot, Params};
 
@@ -103,16 +108,57 @@ fn wrapper() {
     fn set_fields(value: String) -> () {
         GLOBAL_DATA.lock().unwrap().push(value);
     }
-    #[pyfunction]
-    fn fields() -> PyResult<String> {
-        Ok(GLOBAL_DATA.lock().unwrap()[0].clone())
+    // #[pyfunction]
+    // fn fields(cb:  Box<dyn Fn(String)>) -> PyResult<String> {
+    //     GLOBAL_CALLBACK.lock().unwrap() = cb;
+    // }
+
+    #[pyclass]
+    struct Callback {
+        #[allow(dead_code)] // callback_function is called from Python
+        callback_function: Box<dyn Fn(&PyAny) -> PyResult<()> + Send>,
     }
+
+    #[pymethods]
+    impl Callback {
+        fn __call__(&self, python_api: &PyAny) -> PyResult<()> {
+            (self.callback_function)(python_api)
+        }
+    }
+
+    #[pyfunction]
+    fn rust_register_callback(python_api: &PyAny) -> PyResult<()> {
+        println!("This is rust_register_callback");
+        let message: String = "a captured variable".to_string();
+        Python::with_gil(|py| {
+            let callback = Box::new(Callback {
+                callback_function: Box::new(move |python_api| {
+                    rust_callback(python_api, message.clone())
+                }),
+            });
+            python_api
+                .getattr("set_callback")?
+                .call1((callback.into_py(py),))?;
+            Ok(())
+        })
+    }
+
+    #[pyfunction]
+    fn rust_callback(python_api: &PyAny, message: String) -> PyResult<()> {
+        println!("This is rust_callback");
+        println!("Message = {}", message);
+        python_api.getattr("some_operation")?.call0()?;
+        Ok(())
+    }
+
 
     #[pymodule]
     fn GQLwrapper(_py: Python, m: &PyModule) -> PyResult<()> {
         m.add_function(wrap_pyfunction!(init, m)?)?;
         m.add_function(wrap_pyfunction!(set_fields, m)?)?;
-        m.add_function(wrap_pyfunction!(fields, m)?)?;
+        m.add_function(wrap_pyfunction!(rust_register_callback, m)?)?;
+        m.add_function(wrap_pyfunction!(rust_callback, m)?)?;
+        m.add_class::<Callback>()?;
         Ok(())
     }
 }
