@@ -38,24 +38,8 @@ type Schema = RootNode<'static, QueryRoot, MutationRoot, EmptySubscription>;
 fn create_schema() -> Schema {
     Schema::new(QueryRoot {}, MutationRoot {}, EmptySubscription::new())
 }
-/// simple handle
-fn wrapper() {
-    // struct Memo {
-    //     value: String
-    // }
 
-    // impl Memo {
-    //     fn get(self) -> String {
-    //         self.value
-    //     }
-    //     fn set(self, new: String) -> () {
-    //         self.value = new;
-    //     }
-    // }
-    // let shared = Memo {
-    //     value: "".to_string()
-    // };
-    // static mut shared:String;
+fn wrapper() {
 
     #[get("/graphiql")]
     async fn graphql_playground() -> impl Responder {
@@ -66,13 +50,6 @@ fn wrapper() {
     #[route("/graphql", method = "GET", method = "POST")]
     async fn graphql(st: web::Data<Schema>, data: web::Json<GraphQLRequest>) -> impl Responder {
         let user = data.execute(&st, &()).await;
-        // match serde_json::to_string(&user.serialize()) {
-        //     Ok(result) => query = result,
-        //     _ => {
-        //         //
-        //     }
-        // }
-        // println!("STUFFFFFFFF {:?}", user.get_field_value("age").unwrap().as_string_value().unwrap());
         HttpResponse::Ok().json(user)
     }
 
