@@ -113,20 +113,25 @@ fn wrapper() {
     }
     #[pyfunction]
     fn init(value: i32) -> PyResult<String> {
-        GLOBAL_DATA.lock().unwrap().push(value);
         thread::spawn(move || main());
         Ok("GQLwrapper initialised...".to_string())
     }
 
     #[pyfunction]
-    fn fetch() -> PyResult<i32> {
+    fn inputs(value: i32) -> () {
+        GLOBAL_DATA.lock().unwrap().push(value);
+    }
+
+    #[pyfunction]
+    fn outputs() -> PyResult<i32> {
         Ok(GLOBAL_DATA.lock().unwrap()[0])
     }
 
     #[pymodule]
     fn gqltest(_py: Python, m: &PyModule) -> PyResult<()> {
         m.add_function(wrap_pyfunction!(init, m)?)?;
-        m.add_function(wrap_pyfunction!(fetch, m)?)?;
+        m.add_function(wrap_pyfunction!(inputs, m)?)?;
+        m.add_function(wrap_pyfunction!(outputs, m)?)?;
         Ok(())
     }
 }
