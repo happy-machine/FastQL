@@ -112,7 +112,7 @@ fn wrapper() {
         .await
     }
     #[pyfunction]
-    fn init(value: i32) -> PyResult<String> {
+    fn init() -> PyResult<String> {
         thread::spawn(move || main());
         Ok("GQLwrapper initialised...".to_string())
     }
@@ -128,7 +128,7 @@ fn wrapper() {
     }
 
     #[pymodule]
-    fn gqltest(_py: Python, m: &PyModule) -> PyResult<()> {
+    fn GQLwrapper(_py: Python, m: &PyModule) -> PyResult<()> {
         m.add_function(wrap_pyfunction!(init, m)?)?;
         m.add_function(wrap_pyfunction!(inputs, m)?)?;
         m.add_function(wrap_pyfunction!(outputs, m)?)?;
