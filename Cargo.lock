@@ -11,6 +11,7 @@ dependencies = [
  "actix-web-lab",
  "env_logger",
  "juniper",
+ "lazy_static",
  "log",
  "pyo3",
  "serde",
