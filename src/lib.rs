@@ -69,22 +69,23 @@ async fn main() -> io::Result<()> {
                 // THIS IS THE CALLBACK I WANT TO BE ABLE TO CALL FROM THE RESOLVER
                 let callback = Box::new(Callback {
                     callback_function: Box::new(move |python_api| {
-                        rust_callback(python_api)
+                        rust_callback(python_api, "THIS IS WHERE I WANT TO PUT MY CAPTURED DATA FROM RESOLVER".to_string())
                     }),
                 });
-                println!("Rust: register callback");
+                println!("in rust register callback");
                 python_api
                 .getattr("set_response_callback")?
-                .call1((callback.into_py(py),"data piped from request".to_string()))?;
+                .call1((callback.into_py(py),))?;
                 Ok(())
             })
         }
 
-        // #[pyfunction]
-        fn rust_callback(message: &PyAny) -> PyResult<()> {
+        #[pyfunction]
+        fn rust_callback(python_api: &PyAny, message: String) -> PyResult<()> {
             // This will ultimately be the callback that returns the response
-            println!("Rust: rust_callback");
-            println!("Rust: Message={}", message);
+            println!("This is rust_callback");
+            println!("Message = {}", message);
+            python_api.getattr("some_operation")?.call0()?;
             Ok(())
         }
 
@@ -93,7 +94,7 @@ async fn main() -> io::Result<()> {
         fn GQLwrapper(_py: Python, m: &PyModule) -> PyResult<()> {
             m.add_function(wrap_pyfunction!(init, m)?)?;
             m.add_function(wrap_pyfunction!(rust_register_callback, m)?)?;
-            // m.add_function(wrap_pyfunction!(rust_callback, m)?)?;
+            m.add_function(wrap_pyfunction!(rust_callback, m)?)?;
             m.add_class::<Callback>()?;
             Ok(())
         }
