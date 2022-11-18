@@ -24,6 +24,7 @@ pub struct Model {
     pub tokens: Vec<String>,
     pub images: Vec<String>,
 }
+impl juniper::Context for Model {}
 
 #[derive(GraphQLInputObject)]
 #[graphql(description = "Optional params for inference")]
@@ -37,9 +38,9 @@ pub struct Params {
 
 pub struct MutationRoot;
 
-#[juniper::graphql_object]
+#[juniper::graphql_object(context = Model)]
 impl MutationRoot {
-    fn create_model(params: Params) -> FieldResult<Model> {
+    fn create_model<'mdl>(&self, context: &'mdl Model,_params: Params) -> FieldResult<Model> {
         Ok(Model {
             model: "1234".to_owned(),
             images: vec!["WRET£34t3".to_string(), "WREWRTY£34t3".to_string()],
