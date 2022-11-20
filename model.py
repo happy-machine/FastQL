@@ -1,31 +1,18 @@
-# from lib.wrapper import graphql_wrapper
+import zmq
 import GQLwrapper;
-import os
-import time
 
-print("running py")
-test = 0
-def run_model():
-    global test
-    test = test + 1
-    # time.sleep(3300)
+context = zmq.Context()
 
-
-def runner():
-    global test
-    print("doing some stuff")
-    print("state", test)
-
-    # graphql_wrapper.call_response_callback("some data")
-print('name: ', __name__)
-if __name__ == "__main__":
-    GQLwrapper.init()
-    run_model()
-    print("main state: ", test)
-    time.sleep(5000)
-# else:
-#     runner()
+socket = context.socket(zmq.REQ)
+socket.connect("tcp://localhost:5555")
+GQLwrapper.init()
 
 
 
-# graphql_wrapper.set_fn_to_call(runner)
+while True:
+    string_to_rev = input("enter string ")
+    print(f"sending {string_to_rev}")
+    socket.send(string_to_rev.encode())
+    message = socket.recv()
+    print(f"reversed: {message}")
+

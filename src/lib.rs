@@ -18,10 +18,14 @@ use std::{io, sync::Arc};
 mod schema;
 use crate::schema::{Model, Params};
 pub struct QueryRoot;
+use std::time::Duration;
+
+extern crate zmq;
 
 
 
 fn wrapper() {
+
     let global_cb: Option<Arc<Mutex<Box<dyn FnMut()>>>> = None;
     type CB = Arc<Mutex<Box<dyn FnMut()>>>;
     fn use_cb(callback: CB){
@@ -41,32 +45,52 @@ fn wrapper() {
     #[juniper::graphql_object]
     impl QueryRoot {
         fn model<'mdl>(&self, _params: Params) -> FieldResult<Model> {
-            thread::spawn(move || Python::with_gil(|py| -> Result<(),Box<dyn Error + Send + Sync>> {
-            println!("HERE IN RUST FUNC");
+            fn reverse_word(word: &str) -> String {
+                    let rev: String = word.chars().rev().collect();
+                    rev
+                }
+                let context = zmq::Context::new();
+                let responder = context.socket(zmq::REP).unwrap();
+
+                assert!(responder.bind("tcp://*:5555").is_ok());
+
+                let mut msg = zmq::Message::new();
+
+                loop {
+                    responder.recv(&mut msg, 0).unwrap();
+                    println!("received: {}", msg.as_str().unwrap());
+
+                    thread::sleep(Duration::from_millis(1000));
+
+                    let response: String = reverse_word(msg.as_str().unwrap());
+                    responder.send(response.as_bytes(), 0).unwrap();
+                }
+            // thread::spawn(move || Python::with_gil(|py| -> Result<(),Box<dyn Error + Send + Sync>> {
+            // println!("HERE IN RUST FUNC");
 
             //PyResult<Py<PyAny>>
             // let python_module: Py<PyAny> = PyModule::import(py, "model")?
             //     .call_method0("runner")?
             //     .into();
             // python_module.call0(py)
-            let python_module: Py<PyAny> = PyModule::import(py, "model")?
-                .call_method0("runner")?
-                .into();
+            // let python_module: Py<PyAny> = PyModule::import(py, "model")?
+            //     .call_method0("runner")?
+            //     .into();
             // let python_module: Py<PyAny> = PyModule::import(py, "model")?
             // .getattr("runner")?
             // .call0()?
             // .into();
-            let result = python_module.call0(py);
+            // let result = python_module.call0(py);
             //         let python_module: Py<PyAny> = PyModule::import(py, "model")?    
             //             .getattr("set_response_callback")?
             //             .call1((callback.into_py(py),"test".to_string()))?;
-            println!("res: {:?}", result);
+            // println!("res: {:?}", result);
             //     let result = py.eval("[i * 10 for i in range(5)]", None, None).map_err(|e| {
             //     e.print_and_set_sys_last_vars(py);
             // })?;
             // let res: Vec<i64> = result.extract().unwrap();
-            Ok(())
-        }));
+        //     Ok(())
+        // }));
         //    let _res = thread_join_handle.join();
             // I WANT TO BE ABLE TO CALL THE CALLBACK HERE WITH MY GRAPHQLDATA!
             Ok(Model {
@@ -99,6 +123,7 @@ fn wrapper() {
 
     #[actix_web::main]
     async fn main() -> io::Result<()> {
+ 
         std::env::set_var("RUST_LOG", "actix_web=info");
         env_logger::init();
         let schema = Arc::new(create_schema());

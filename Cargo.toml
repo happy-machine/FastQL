@@ -14,7 +14,7 @@ actix-web = "4"
 actix-web-lab = "0.18"
 actix-cors = "0.6"
 lazy_static = "1.4.0"
-
+zmq = "0.10.0"
 juniper = "0.15"
 
 env_logger = "0.9"
