@@ -1,18 +1,13 @@
-import zmq
-import GQLwrapper;
+import time
+import random
+import string
+from lib.wrapper import graphql_wrapper
 
-context = zmq.Context()
+def run_model(message):
+    print("running model")
+    time.sleep(random.randint(0,9) * 0.005)
+    # simulate variable response time
+    return f"{message} : {''.join(random.choice(string.digits) for i in range(10))}"
 
-socket = context.socket(zmq.REQ)
-socket.connect("tcp://localhost:5555")
-GQLwrapper.init()
-
-
-
-while True:
-    string_to_rev = input("enter string ")
-    print(f"sending {string_to_rev}")
-    socket.send(string_to_rev.encode())
-    message = socket.recv()
-    print(f"reversed: {message}")
-
+graphql_wrapper.set_model(run_model)
+graphql_wrapper.listen()
