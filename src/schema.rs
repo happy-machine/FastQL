@@ -18,6 +18,11 @@ use juniper::{GraphQLEnum, GraphQLInputObject, GraphQLObject};
 #[graphql(description = "A stable diffusion model inference")]
 pub struct Model {
     pub prompt: String,
+    pub artifact: String,
+    pub artifact_type: ArtifactType,
+    pub model: String,
+    pub tokens: Vec<String>,
+    pub images: Vec<String>,
 }
 impl juniper::Context for Model {}
 
