@@ -17,7 +17,7 @@ build/
 develop-eggs/
 dist/
 eggs/
-# lib/
+.env/lib
 lib64/
 parts/
 sdist/
