@@ -1,0 +1,36 @@
+
+    schema {
+        query: Query
+    }
+
+    type Query {
+        model(params: Params!): Model!! @juniper(ownership: "owned")
+    }
+
+    enum ArtifactType {
+        ARTIFACT_NONE
+        ARTIFACT_IMAGE
+        ARTIFACT_VIDEO
+        ARTIFACT_TEXT
+        ARTIFACT_TOKENS
+        ARTIFACT_EMBEDDING
+        ARTIFACT_CLASSIFICATIONS
+        ARTIFACT_MASK
+    }
+
+    type Model {
+        prompt: String
+        artifact: String
+        artifactType: ArtifactType
+        model: String
+        tokens: [String]
+        images: [String]
+    }
+
+    input Params {
+        prompt: String
+        artifact: String
+        artifactType: ArtifactType
+        model: String
+        tokens: [String]
+    }
