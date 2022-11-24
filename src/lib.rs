@@ -6,6 +6,8 @@ use std::sync::{Arc, Mutex, RwLock};
 use std::thread;
 
 use async_graphql::{
+    http::playground_source,
+    http::GraphQLPlaygroundConfig,
     dynamic::*,
     http::GraphiQLSource,
     EmptyMutation,
@@ -15,6 +17,7 @@ use async_graphql::{
     QueryPathSegment
 };
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
+use async_graphql::extensions::ApolloTracing;
 
 async fn index(schema: web::Data<Schema>, req: GraphQLRequest) -> GraphQLResponse {
     let inner = req.into_inner();
@@ -24,10 +27,7 @@ async fn index(schema: web::Data<Schema>, req: GraphQLRequest) -> GraphQLRespons
 async fn index_graphiql() -> Result<HttpResponse> {
     Ok(HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
-        .body(
-            GraphiQLSource::build()
-                .endpoint("http://localhost:8000")
-                .finish(),
+        .body(playground_source(GraphQLPlaygroundConfig::new("http://localhost:8000"))
         ))
 }
 
@@ -49,7 +49,8 @@ pub async fn start_server(query: Object, model: Object) -> std::io::Result<()> {
     let schema = Schema::build(query.type_name(), None, None)
         .register(model)
         .register(query)
-		// .data(MyData::new())
+        .extension(ApolloTracing)
+		// .data(Context::init())
         .finish();
 
     let schema2 = schema.unwrap();
@@ -105,19 +106,20 @@ fn init<'a>(fields: Vec<String>) -> PyResult<()> {
             };
             // let field3: String = field.clone();
 
-            let context = zmq::Context::new();
-            let sender = context.socket(zmq::REQ).unwrap();
-            let reciever = context.socket(zmq::REP).unwrap();
-            assert!(sender.bind("tcp://*:5555").is_ok());
-            sender.send(nameField, 0).unwrap();
-            let mut msg = zmq::Message::new();            
-            assert!(reciever.bind("tcp://*:5556").is_ok());
-            loop {
-                reciever.recv(&mut msg, 0).unwrap();
-                println!("received: {}", msg.as_str().unwrap());
-                break;
-            }
-            Ok(Some(Value::from(msg.as_str().unwrap())))
+            // let context = zmq::Context::new();
+            // let sender = context.socket(zmq::REQ).unwrap();
+            // let reciever = context.socket(zmq::REP).unwrap();
+            // assert!(sender.bind("tcp://*:5555").is_ok());
+            // sender.send(nameField, 0).unwrap();
+            // let mut msg = zmq::Message::new();            
+            // assert!(reciever.bind("tcp://*:5556").is_ok());
+            // loop {
+            //     reciever.recv(&mut msg, 0).unwrap();
+            //     println!("received: {}", msg.as_str().unwrap());
+            //     break;
+            // }
+            // Ok(Some(Value::from(msg.as_str().unwrap())))
+            Ok(Some(Value::from("test".to_string())))
     }));
 
     model = model.field(gqlField);

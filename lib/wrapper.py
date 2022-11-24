@@ -1,5 +1,5 @@
 import zmq
-import GQLwrapper;
+import fastql;
 
 class Wrapper:
     def __init__(self):
@@ -11,7 +11,7 @@ class Wrapper:
         self.context = zmq.Context()
     def listen(self):
         print('listening')
-        GQLwrapper.init(self.fields)
+        fastql.init(self.fields)
         while True:
             socket = self.context.socket(zmq.REP)
             socket.connect("tcp://localhost:5555")
@@ -32,4 +32,4 @@ class Wrapper:
         self.callback = kwargs['callback']
         self.listen()
 
-graphql_server = Wrapper()
+fastql_server = Wrapper()

@@ -3,25 +3,6 @@
 version = 3
 
 [[package]]
-name = "GQLwrapper"
-version = "0.1.0"
-dependencies = [
- "actix-cors",
- "actix-web",
- "actix-web-lab",
- "async-graphql",
- "async-graphql-actix-web",
- "env_logger",
- "juniper",
- "lazy_static",
- "log",
- "pyo3",
- "serde",
- "serde_json",
- "zmq",
-]
-
-[[package]]
 name = "Inflector"
 version = "0.11.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -461,6 +442,7 @@ dependencies = [
  "async-trait",
  "base64",
  "bytes",
+ "chrono",
  "fast_chemail",
  "fnv",
  "futures-util",
@@ -1071,6 +1053,25 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "495a39d30d624c2caabe6312bfead73e7717692b44e0b32df168c275a2e8e9e4"
 dependencies = [
  "ascii_utils",
+]
+
+[[package]]
+name = "fastql"
+version = "0.1.0"
+dependencies = [
+ "actix-cors",
+ "actix-web",
+ "actix-web-lab",
+ "async-graphql",
+ "async-graphql-actix-web",
+ "env_logger",
+ "juniper",
+ "lazy_static",
+ "log",
+ "pyo3",
+ "serde",
+ "serde_json",
+ "zmq",
 ]
 
 [[package]]
