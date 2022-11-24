@@ -1,6 +1,8 @@
+// use actix_web_lab::__reexports::tokio::sync::RwLock;
 use pyo3::prelude::*;
 use pyo3::types::{IntoPyDict, PyTuple};
 use actix_web::{guard, web, web::Data, App, HttpResponse, HttpServer, Result};
+use std::sync::{Arc, Mutex, RwLock};
 use std::thread;
 
 use async_graphql::{
@@ -9,7 +11,8 @@ use async_graphql::{
     EmptyMutation,
     EmptySubscription,
     Object,
-    Value, ObjectType
+    Value, ObjectType,
+    QueryPathSegment
 };
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 
@@ -30,7 +33,7 @@ async fn index_graphiql() -> Result<HttpResponse> {
 
 
 #[actix_web::main]
-pub async fn start_server(query: Object) -> std::io::Result<()> {
+pub async fn start_server(query: Object, model: Object) -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "debug");
     std::env::set_var("RUST_BACKTRACE", "1");
     env_logger::init();
@@ -44,6 +47,7 @@ pub async fn start_server(query: Object) -> std::io::Result<()> {
 
 
     let schema = Schema::build(query.type_name(), None, None)
+        .register(model)
         .register(query)
 		// .data(MyData::new())
         .finish();
@@ -62,43 +66,71 @@ pub async fn start_server(query: Object) -> std::io::Result<()> {
 }
 
 #[pyfunction]
-fn py_start_server(fields: Vec<String>) -> PyResult<()> {
+fn init<'a>(fields: Vec<String>) -> PyResult<()> {
   println!("001 {:?}", fields);
   
-  let mut query = Object::new("Query");
+  /*
+    query {
+        Model {
+            images,
+            tokens
+        }
+    }
+   */
+  let mut model = Object::new("Model");
+
+  pub struct Model {}
+
+  let mut query = Object::new("Query").field(
+    Field::new(
+        "Model",
+        TypeRef::named_nn(model.type_name()),
+        |_| FieldFuture::new(async{
+            Ok(Some(()))
+        })
+    )
+  );
 
   let mut gqlFields: Vec<Field> = Vec::new();
 
   for field in fields {
-    let gqlField = Field::new(field.to_string(), TypeRef::named_nn(TypeRef::INT), |_| FieldFuture::new(async{
+    let gqlField = Field::new(
+        field.to_string(),
+        TypeRef::named_nn(TypeRef::STRING),
+        |ctx:ResolverContext| FieldFuture::new(async{
 
-      let out2: PyResult<i32> = Python::with_gil(|py| {
+            let nameField = match ctx.ctx.path_node.unwrap().segment {
+                QueryPathSegment::Name(value) => value,
+                _ => ""
+            };
+            // let field3: String = field.clone();
 
-          // TEST
-          let test = PyModule::import(py, "model2")?;
-          let test_fn = test.getattr("run_model")?;
-          let result: i32 = test_fn.call0()?.extract()?;
-          println!("012 result: {}", result);
-          // EO TEST
-          Ok(result)
-      });
-
-      Ok(Some(Value::from(out2.unwrap())))
+            let context = zmq::Context::new();
+            let sender = context.socket(zmq::REQ).unwrap();
+            let reciever = context.socket(zmq::REP).unwrap();
+            assert!(sender.bind("tcp://*:5555").is_ok());
+            sender.send(nameField, 0).unwrap();
+            let mut msg = zmq::Message::new();            
+            assert!(reciever.bind("tcp://*:5556").is_ok());
+            loop {
+                reciever.recv(&mut msg, 0).unwrap();
+                println!("received: {}", msg.as_str().unwrap());
+                break;
+            }
+            Ok(Some(Value::from(msg.as_str().unwrap())))
     }));
 
-    query = query.field(gqlField);
+    model = model.field(gqlField);
   }
-  thread::spawn(move || start_server(query));
+  thread::spawn(move || start_server(query, model));
 
-  println!("002");
   Ok(())
 }
 
 #[pymodule]
 #[pyo3(name = "GQLwrapper")]
 fn st_df_2(_py: Python, m: &PyModule) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(py_start_server, m)?)?;
-    // m.add_function(wrap_pyfunction!(init_graphql_server, m)?)?;
+    m.add_function(wrap_pyfunction!(init, m)?)?;
 
     Ok(())
 }
