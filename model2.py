@@ -1,18 +1,15 @@
 import time
 import random
 import string
-from lib.wrapper import graphql_wrapper
 import GQLwrapper
+from lib.wrapper import fastql
 
 model = 0
 
-def start_server():
-    GQLwrapper.py_start_server(callback=cb, fields=["field1", "field2"])
+def run_model(message):
+    print("running model")
+    time.sleep(random.randint(0,9) * 0.005)
+    # simulate variable response time
+    return f"{message} : {''.join(random.choice(string.digits) for i in range(10))}"
 
-def run_model():
-    global model
-    model = model + 1
-    return model
-
-
-graphql_wrapper.start_server(callback=run_model, fields=["field1", "field2"])
+fastql.start(callback=run_model, fields=["field1", "field2"])

@@ -4,10 +4,14 @@ import GQLwrapper;
 class Wrapper:
     def __init__(self):
         self.callback = None
-        self.context = zmq.Context()
+        self.fields = []
         print('initialising..')
+
+        print('started GraphQL server.')
+        self.context = zmq.Context()
     def listen(self):
-        print('listening...')
+        print('listening')
+        GQLwrapper.init(self.fields)
         while True:
             socket = self.context.socket(zmq.REP)
             socket.connect("tcp://localhost:5555")
@@ -18,14 +22,14 @@ class Wrapper:
                 result = self.run_model(message)
                 response.send_string(result)
                 break
-    def start_server(self, **kwargs):
-        self.callback = kwargs['callback']
-        GQLwrapper.py_start_server(kwargs['fields'])
-        print('started GraphQL server.')
-        self.listen()
     def run_model(self, message):
         assert self.callback is not None
         result = self.callback(message)
         return result
-        
-graphql_wrapper = Wrapper()
+    def start(self, **kwargs):
+        assert self.fields is not []
+        self.fields = kwargs['fields']
+        self.callback = kwargs['callback']
+        self.listen()
+
+graphql_server = Wrapper()
