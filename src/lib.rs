@@ -34,16 +34,16 @@ async fn index_graphiql() -> Result<HttpResponse> {
 
 #[actix_web::main]
 pub async fn start_server(query: Object, model: Object) -> std::io::Result<()> {
-    std::env::set_var("RUST_LOG", "debug");
-    std::env::set_var("RUST_BACKTRACE", "1");
-    env_logger::init();
+    // std::env::set_var("RUST_LOG", "debug");
+    // std::env::set_var("RUST_BACKTRACE", "1");
+    // env_logger::init();
 
     // let query = Object::new("Query")
     //     .field(Field::new("howdy", TypeRef::named_nn(TypeRef::STRING), |_| FieldFuture::new(async {
     //         Ok(Some(Value::from("partner")))
     //     })));
 
-    println!("001 {}", query.type_name());
+    // println!("001 {}", query.type_name());
 
 
     let schema = Schema::build(query.type_name(), None, None)
@@ -106,20 +106,20 @@ fn init<'a>(fields: Vec<String>) -> PyResult<()> {
             };
             // let field3: String = field.clone();
 
-            // let context = zmq::Context::new();
-            // let sender = context.socket(zmq::REQ).unwrap();
-            // let reciever = context.socket(zmq::REP).unwrap();
-            // assert!(sender.bind("tcp://*:5555").is_ok());
-            // sender.send(nameField, 0).unwrap();
-            // let mut msg = zmq::Message::new();            
-            // assert!(reciever.bind("tcp://*:5556").is_ok());
-            // loop {
-            //     reciever.recv(&mut msg, 0).unwrap();
-            //     println!("received: {}", msg.as_str().unwrap());
-            //     break;
-            // }
-            // Ok(Some(Value::from(msg.as_str().unwrap())))
-            Ok(Some(Value::from("test".to_string())))
+            let context = zmq::Context::new();
+            let sender = context.socket(zmq::REQ).unwrap();
+            let reciever = context.socket(zmq::REP).unwrap();
+            assert!(sender.bind("tcp://*:5555").is_ok());
+            sender.send(nameField, 0).unwrap();
+            let mut msg = zmq::Message::new();            
+            assert!(reciever.bind("tcp://*:5556").is_ok());
+            loop {
+                reciever.recv(&mut msg, 0).unwrap();
+                // println!("received: {}", msg.as_str().unwrap());
+                break;
+            }
+            Ok(Some(Value::from(msg.as_str().unwrap())))
+            // Ok(Some(Value::from("test".to_string())))
     }));
 
     model = model.field(gqlField);
