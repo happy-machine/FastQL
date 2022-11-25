@@ -13,6 +13,7 @@ pyo3 = { version = "0.17.1", features = ["extension-module"] }
 actix-web = "4"
 actix-web-lab = "0.18"
 actix-cors = "0.6"
+actix-http = "3.2.2"
 lazy_static = "1.4.0"
 zmq = "0.10.0"
 juniper = "0.15"

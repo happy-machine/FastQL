@@ -1,10 +1,10 @@
 // use actix_web_lab::__reexports::tokio::sync::RwLock;
 use pyo3::prelude::*;
 use pyo3::types::{IntoPyDict, PyTuple};
-use actix_web::{guard, web, web::Data, App, HttpResponse, HttpServer, Result};
+use actix_web::{guard, web, web::Data, App, HttpResponse, HttpServer, Result, http};
 use std::sync::{Arc, Mutex, RwLock};
 use std::thread;
-
+use actix_cors::Cors;
 use async_graphql::{
     http::playground_source,
     http::GraphQLPlaygroundConfig,
@@ -16,6 +16,12 @@ use async_graphql::{
     Value, ObjectType,
     QueryPathSegment
 };
+use actix_http::{
+    body::{BoxBody, EitherBody, MessageBody},
+    header::HeaderMap,header::HeaderValue,
+    Extensions, Response, ResponseHead, StatusCode,
+};
+
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use async_graphql::extensions::ApolloTracing;
 
@@ -27,6 +33,8 @@ async fn index(schema: web::Data<Schema>, req: GraphQLRequest) -> GraphQLRespons
 async fn index_graphiql() -> Result<HttpResponse> {
     Ok(HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")
+        // .append_header((HeaderValue::from_static("access-control-allow-origin"), HeaderValue::from_static("*")))
+        // .append_header((HeaderValue::from_static("access-control-allow-credentials"), HeaderValue::from_static("true")))
         .body(playground_source(GraphQLPlaygroundConfig::new("http://localhost:8000"))
         ))
 }
@@ -56,10 +64,20 @@ pub async fn start_server(query: Object, model: Object) -> std::io::Result<()> {
     let schema2 = schema.unwrap();
 
     HttpServer::new(move || {
+        let cors = Cors::default()
+        .allowed_origin("*")
+        // .allowed_origin_fn(|origin, _req_head| {
+        //     origin.as_bytes().ends_with(b".rust-lang.org")
+        // })
+        .allowed_methods(vec!["GET", "POST"])
+        // .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
+        .allowed_header(http::header::CONTENT_TYPE);
+        // .max_age(3600);
       App::new()
+          .wrap(cors)
           .app_data(Data::new(schema2.clone()))
           .service(web::resource("/").guard(guard::Post()).to(index))
-          .service(web::resource("/").guard(guard::Get()).to(index_graphiql))
+          .service(web::resource("/graphql").guard(guard::Get()).to(index_graphiql))
     })
     .bind("127.0.0.1:8000")?
     .run()
