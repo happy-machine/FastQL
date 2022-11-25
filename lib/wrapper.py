@@ -13,14 +13,14 @@ class Wrapper:
         print('listening')
         fastql.init(self.fields)
         while True:
-            socket = self.context.socket(zmq.PULL)
+            socket = self.context.socket(zmq.REP)
             socket.connect("tcp://localhost:5555")
-            response = self.context.socket(zmq.PUSH)
-            response.connect("tcp://localhost:5556")
+            # response = self.context.socket(zmq.PUSH)
+            # response.connect("tcp://localhost:5556")
             while True:
                 message = socket.recv_string()
                 result = self.run_model(message)
-                response.send_string(result)
+                socket.send_string(result)
                 # break
     def run_model(self, message):
         assert self.callback is not None

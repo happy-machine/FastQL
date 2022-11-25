@@ -33,7 +33,6 @@ async fn index_graphiql() -> Result<HttpResponse> {
 
 struct Context {
     zmqSender: Mutex<zmq::Socket>,
-    zmqReciever: Mutex<zmq::Socket>
 }
 
 #[actix_web::main]
@@ -51,11 +50,9 @@ pub async fn start_server(query: Object, model: Object) -> std::io::Result<()> {
 
     let zmqContext = zmq::Context::new();
     let context = Context {
-        zmqSender: Mutex::new(zmqContext.socket(zmq::PUSH).unwrap()),
-        zmqReciever: Mutex::new(zmqContext.socket(zmq::PULL).unwrap())
+        zmqSender: Mutex::new(zmqContext.socket(zmq::REQ).unwrap()),
     };
     assert!(context.zmqSender.lock().unwrap().bind("tcp://*:5555").is_ok());
-    assert!(context.zmqReciever.lock().unwrap().bind("tcp://*:5556").is_ok());
 
     let schema = Schema::build(query.type_name(), None, None)
         .register(model)
@@ -122,10 +119,9 @@ fn init<'a>(fields: Vec<String>) -> PyResult<()> {
             let sender = context.zmqSender.lock().unwrap();
             sender.send(nameField, 0).unwrap();
 
-            let reciever = context.zmqReciever.lock().unwrap();
             let mut msg = zmq::Message::new();
             loop {
-                reciever.recv(&mut msg, 0).unwrap();
+                sender.recv(&mut msg, 0).unwrap();
                 break;
             }            
         
