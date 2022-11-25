@@ -21,6 +21,7 @@ use actix_http::{
     header::HeaderMap,header::HeaderValue,
     Extensions, Response, ResponseHead, StatusCode,
 };
+use std::collections::HashMap;
 
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use async_graphql::extensions::ApolloTracing;
@@ -86,7 +87,7 @@ pub async fn start_server(query: Object, model: Object) -> std::io::Result<()> {
         .allowed_header(http::header::CONTENT_TYPE);
         // .max_age(3600);
       App::new()
-          .wrap(cors)
+        //   .wrap(cors)
           .app_data(Data::new(schema2.clone()))
           .service(web::resource("/").guard(guard::Post()).to(index))
           .service(web::resource("/graphql").guard(guard::Get()).to(index_graphiql))
@@ -96,9 +97,17 @@ pub async fn start_server(query: Object, model: Object) -> std::io::Result<()> {
     .await  
 }
 
+// struct Inputs {
+//     fields: HashMap<String, (String, String)>,
+//     params: HashMap<String, (String, String)>,
+// }
+
 #[pyfunction]
-fn init<'a>(fields: Vec<String>) -> PyResult<()> {
-  println!("001 {:?}", fields);
+fn init<'a>(
+    params: HashMap<String, (String, String)>,
+    fields: HashMap<String, (String, String)>
+) -> PyResult<()> {
+  println!("001 {:?} {:?}", fields, params);
   
   /*
     query {
@@ -124,9 +133,9 @@ fn init<'a>(fields: Vec<String>) -> PyResult<()> {
 
   let mut gqlFields: Vec<Field> = Vec::new();
 
-  for field in fields {
+  for (index, (key, val)) in fields.iter().enumerate() {
     let gqlField = Field::new(
-        field.to_string(),
+        key.to_string(),
         TypeRef::named_nn(TypeRef::STRING),
         |ctx:ResolverContext| FieldFuture::new(async move {
 
@@ -150,7 +159,7 @@ fn init<'a>(fields: Vec<String>) -> PyResult<()> {
             Ok(Some(Value::from(msg.as_str().unwrap())))
             // Ok(Some(Value::from("test".to_string())))
         })
-    );
+    ).description(val.1.to_string());
 
     model = model.field(gqlField);
   }

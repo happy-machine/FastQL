@@ -4,14 +4,14 @@ import fastql;
 class Wrapper:
     def __init__(self):
         self.callback = None
-        self.fields = []
+        self.params = {}
+        self.fields = {}
         print('initialising..')
-
         print('started GraphQL server.')
         self.context = zmq.Context()
     def listen(self):
         print('listening')
-        fastql.init(self.fields)
+        fastql.init(self.params, self.fields)
         while True:
             socket = self.context.socket(zmq.PULL)
             socket.connect("tcp://localhost:5555")
@@ -28,6 +28,7 @@ class Wrapper:
         return result
     def start(self, **kwargs):
         assert self.fields is not []
+        self.params = kwargs['params']
         self.fields = kwargs['fields']
         self.callback = kwargs['callback']
         self.listen()
