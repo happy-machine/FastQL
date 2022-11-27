@@ -1,5 +1,7 @@
 import random
 import string
+import json
+
 from lib.wrapper import fastql_server
 
 
@@ -14,8 +16,27 @@ fields = {
     'tokens': ('[String]', 'blah')
 }
 
+params2 = {
+    'prompt': {
+        'type': 'String', 
+        'description': 'a text prompt for the image you want generated'
+    },
+    'artifact': {
+        'type': 'String'
+    },
+    'artifactType': {
+        'type': 'String'
+    },
+    'model': {
+        'type': 'String'
+    },
+}
 def run_model(message):
     print("running model")
-    return f"{message} : {''.join(random.choice(string.digits) for i in range(10))}"
+    # return f"{message} : {''.join(random.choice(string.digits) for i in range(10))}"
+    return json.dumps({
+        "images": "some stuff",
+        "tokens": "an array of stuff"
+    })
 
-fastql_server.start(callback=run_model, params=params, fields=fields)
+fastql_server.start(callback=run_model, params=params2, fields=fields)
