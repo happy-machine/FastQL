@@ -11,10 +11,31 @@ use async_graphql::{
     Value,
 };
 use std::collections::HashMap;
+use std::fmt;
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use async_graphql::extensions::ApolloTracing;
 use serde_json::json;
+use serde::{Serialize, Deserialize};
 
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(untagged)]
+enum StringOrStringVec {
+    String(String),
+    Vec(Vec<String>)
+}
+
+impl fmt::Display for StringOrStringVec {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        let mut str = "";
+        str = "one";
+        Ok(())
+    }
+}
+#[derive(Debug, Serialize, Deserialize)]
+struct PythonResponse {
+    images: StringOrStringVec,
+    tokens: StringOrStringVec,
+}
 
 async fn index(schema: web::Data<Schema>, req: GraphQLRequest) -> GraphQLResponse {
     let inner = req.into_inner();
@@ -34,8 +55,8 @@ struct Context {
 
 #[actix_web::main]
 pub async fn start_server(query: Object, model: Object) -> std::io::Result<()> {
-    // std::env::set_var("RUST_LOG", "debug");
     std::env::set_var("RUST_BACKTRACE", "1");
+    // std::env::set_var("RUST_LOG", "debug");
     // env_logger::init();
 
     let zmq_context = zmq::Context::new();
@@ -72,6 +93,8 @@ pub async fn start_server(query: Object, model: Object) -> std::io::Result<()> {
     .await  
 }
 
+
+
 #[pyfunction]
 fn init<'a>(
     params: HashMap<String, HashMap<String, String>>,
@@ -95,22 +118,36 @@ fn init<'a>(
         sender.send(&json!(params_hashmap).to_string(), 0).unwrap();
         let mut msg = zmq::Message::new();
         sender.recv(&mut msg, 0).unwrap();
-        let deserialized: HashMap<String, String> = serde_json::from_str(&msg.as_str().unwrap()).unwrap();
+        println!("got {:?}", serde_json::from_str::<PythonResponse>(&msg.as_str().unwrap()).unwrap());
+        // let deserialized: PythonResponse = serde_json::from_str::<PythonResponse>(&msg.as_str().unwrap()).unwrap();
+        let deserialized: HashMap<String, StringOrStringVec> = serde_json::from_str(&msg.as_str().unwrap()).unwrap();
+        println!("deserialized {:?}", deserialized.get("images").unwrap());
         Ok(Some(FieldValue::owned_any(deserialized)))
     })
   );
 
-  for (key, val) in params.iter() {
-    let type_factory = match val.get("type").unwrap().as_str() {
-      "String" => TypeRef::STRING,
-      "Int" => TypeRef::INT,
-      "Boolean" => TypeRef::BOOLEAN,
-      "Float" => TypeRef::FLOAT,
-      _ => panic!("Type {:?} is not allowed", val.get("type").unwrap().as_str())
+  fn type_factory(gql_type: &str) -> async_graphql::dynamic::TypeRef {
+    let out = match gql_type {
+      "String" => TypeRef::named(TypeRef::STRING),
+      "Int" => TypeRef::named(TypeRef::INT),
+      "Boolean" => TypeRef::named(TypeRef::BOOLEAN),
+      "Float" => TypeRef::named(TypeRef::FLOAT),
+      "ID" => TypeRef::named(TypeRef::ID),
+      "[String]" => TypeRef::named_list(TypeRef::STRING),
+      "[Int]" => TypeRef::named_list(TypeRef::INT),
+      "[Boolean]" => TypeRef::named_list(TypeRef::BOOLEAN),
+      "[Float]" => TypeRef::named_nn_list_nn(TypeRef::FLOAT),
+      "[ID]" => TypeRef::named_nn_list_nn(TypeRef::ID),
+      _ => panic!("Type {:?} is not allowed", gql_type)
     };
+    println!("out got {} {:?}", gql_type, out);
+    return out
+  }
+
+  for (key, val) in params.iter() {
     modelField = modelField.argument(InputValue::new(
       key,
-      TypeRef::named(type_factory)
+      type_factory(val.get("type").unwrap().as_str()),
     ).description(val.get("description").unwrap_or(&"No docs yet!".to_string())));
   }
 
@@ -121,12 +158,17 @@ fn init<'a>(
   for (key, val) in fields.iter() {
     let field = Field::new(
         key.to_string(),
-        TypeRef::named_nn(TypeRef::STRING),
+        // type_factory(val.get("type").unwrap().as_str()),
+        // TypeRef::named_list(TypeRef::STRING)
+         type_factory(val.get("type").unwrap().as_str()),
         |ctx:ResolverContext| FieldFuture::new(async move {
-            let field_hashmap = ctx.parent_value.try_downcast_ref::<HashMap<String, String>>()?;
-            let value = field_hashmap.get(ctx.field().name());
-            let out = value.unwrap();
-            Ok(Some(Value::from(out.to_string())))
+          // println!("PArent value {:?}", ctx.parent_value.try_downcast_ref::<HashMap<String, Vec<String>>>()?);
+          // println!("PArent value {:?}", ctx.parent_value.try_downcast_ref::<HashMap<String, StringOrStringVec>>()?);
+          let field_hashmap = ctx.parent_value.try_downcast_ref::<HashMap<String, StringOrStringVec>>()?;
+          let value = field_hashmap.get(ctx.field().name());
+          let out = value.unwrap();
+          println!("out -> : {:?}", out);
+          Ok(Some(Value::from(vec!("boom", "town"))))
         })
     ).description(val.get("description").unwrap_or(&"No docs yet!".to_string()));
     model = model.field(field);

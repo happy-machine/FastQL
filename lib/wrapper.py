@@ -17,8 +17,9 @@ class Wrapper:
             while True:
                 message = socket.recv_string()
                 parsed = json.loads(message)
-                result = self.run_model(**parsed)
-                socket.send_string(json.dumps(result))
+                result = json.dumps(self.run_model(**parsed))
+                # print(result)
+                socket.send_string(result)
     def run_model(self, **kwargs):
         assert self.callback is not None
         result = self.callback(**kwargs)
