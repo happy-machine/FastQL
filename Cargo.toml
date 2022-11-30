@@ -15,6 +15,6 @@ actix-cors = "0.6"
 zmq = "0.10.0"
 env_logger = "0.9"
 serde_json = "1"
-async-graphql = { version = "5.0.0-alpha.5", features = ["dynamic-schema", "apollo_tracing"]}
-async-graphql-actix-web = "5.0.0-alpha.5"
+async-graphql = { version = "5.0.2", features = ["dynamic-schema", "apollo_tracing"]}
+async-graphql-actix-web = "5.0.2"
 serde = "1.0.148"

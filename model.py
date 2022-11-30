@@ -8,7 +8,7 @@ from schema import args, fields;
 #     }
 def run_model(**kwargs):
     return {
-        'images': ['test', 'testst', 'esetst'],
-        'tokens': ['test', 'testst', 'esetst'],
+        'images': f'this is a base64 string with {kwargs["prompt"]}',
+        'tokens': ['test', 'testst', '111st'],
     }
 fastql_server.start(callback=run_model, args=args, fields=fields)

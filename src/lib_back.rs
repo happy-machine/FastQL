@@ -17,11 +17,20 @@ use async_graphql::extensions::ApolloTracing;
 use serde_json::json;
 use serde::{Serialize, Deserialize};
 
+
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(untagged)]
 enum StringOrStringVec {
     String(String),
-    Vec(Vec<String>)
+    VecString(Vec<String>),
+    Float(f32),
+    VecFloat(Vec<f32>),
+    Boolean(bool),
+    VecBoolean(Vec<bool>),
+    ID(String),
+    VecID(Vec<String>),
+    Int(i32),
+    VecInt(Vec<i32>)
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -119,24 +128,32 @@ fn init<'a>(
 
         let deserialized: HashMap<String, Vec<String>> = deserialized.into_iter().map(|(key, val)| match val {
             StringOrStringVec::String(s) => (key, vec![s]),
-            StringOrStringVec::Vec(v) => (key, v),
+            StringOrStringVec::VecString(v) => (key, v),
+            StringOrStringVec::Float(s) => (key, vec![s.to_string()]),
+            StringOrStringVec::VecFloat(v) => (key, v.iter().map(|w| w.to_string()).collect()),
+            StringOrStringVec::Boolean(s) => (key, vec![s.to_string()]),
+            StringOrStringVec::VecBoolean(v) => (key, v.iter().map(|w| w.to_string()).collect()),
+            StringOrStringVec::ID(s) => (key, vec![s.to_string()]),
+            StringOrStringVec::VecID(v) => (key, v.iter().map(|w| w.to_string()).collect()),
+            StringOrStringVec::Int(s) => (key, vec![s.to_string()]),
+            StringOrStringVec::VecInt(v) => (key, v.iter().map(|w| w.to_string()).collect()),
         }).collect();
         Ok(Some(FieldValue::owned_any(deserialized)))
     })
   );
 
-  fn type_factory(gql_type: &str) -> (async_graphql::dynamic::TypeRef, bool) {
+  fn type_factory(gql_type: &str) -> (async_graphql::dynamic::TypeRef) {
     let out = match gql_type {
-      "String" => (TypeRef::named(TypeRef::STRING), false),
-      "Int" => (TypeRef::named(TypeRef::INT),false),
-      "Boolean" => (TypeRef::named(TypeRef::BOOLEAN), false ),
-      "Float" => (TypeRef::named(TypeRef::FLOAT), false),
-      "ID" => (TypeRef::named(TypeRef::ID), false),
-      "[String]" => (TypeRef::named_list(TypeRef::STRING), true),
-      "[Int]" => (TypeRef::named_list(TypeRef::INT), true),
-      "[Boolean]" => (TypeRef::named_list(TypeRef::BOOLEAN), true),
-      "[Float]" => (TypeRef::named_list(TypeRef::FLOAT),true ),
-      "[ID]" => (TypeRef::named_list(TypeRef::ID), true),
+      "String" => TypeRef::named(TypeRef::STRING),
+      "Int" => TypeRef::named(TypeRef::INT),
+      "Boolean" => TypeRef::named(TypeRef::BOOLEAN),
+      "Float" => TypeRef::named(TypeRef::FLOAT),
+      "ID" => TypeRef::named(TypeRef::ID),
+      "[String]" => TypeRef::named_list(TypeRef::STRING),
+      "[Int]" => TypeRef::named_list(TypeRef::INT),
+      "[Boolean]" => TypeRef::named_list(TypeRef::BOOLEAN),
+      "[Float]" => TypeRef::named_list(TypeRef::FLOAT),
+      "[ID]" => TypeRef::named_list(TypeRef::ID),
       _ => panic!("Type {:?} is not allowed", gql_type)
     };
     println!("out got {} {:?}", gql_type, out);
@@ -146,7 +163,7 @@ fn init<'a>(
   for (key, val) in params.iter() {
     modelField = modelField.argument(InputValue::new(
       key,
-      type_factory(val.get("type").unwrap().as_str()).0,
+      type_factory(val.get("type").unwrap().as_str()),
     ).description(val.get("description").unwrap_or(&"No docs yet!".to_string())));
   }
 
@@ -154,11 +171,12 @@ fn init<'a>(
     modelField
   );
 
+  // let fields_copy = fields.copy();
   for (key, val) in fields.iter() {
     let type_factory_result = type_factory(val.get("type").unwrap().as_str());
     let field = Field::new(
         key.to_string(),
-        type_factory_result.0,
+        type_factory_result,
         //  type_factory(val.get("type").unwrap().as_str()),
         move |ctx:ResolverContext| FieldFuture::new(async move {
           // println!("PArent value {:?}", ctx.parent_value.try_downcast_ref::<HashMap<String, Vec<String>>>()?);
@@ -166,28 +184,42 @@ fn init<'a>(
             let field_hashmap = ctx.parent_value.try_downcast_ref::<HashMap<String, Vec<String>>>()?;
             let value = field_hashmap.get(ctx.field().name());
             let out = value.unwrap().clone();
-          if type_factory_result.1 == true {
-
-            // match out {
-            //   StringOrStringVec::String(x) => {
-            //     println!("got a string")
-            //   },
-            //   StringOrStringVec::Vec(x) => {
-            //     println!("got a vec")
-            //   },
-            //   _ => {
-
-            //   }
-            // }
-            // let vec_thing = out;
+          if type_factory_result == TypeRef::named_list(TypeRef::STRING) {
             println!("out with vec -> : {:?}", out);
-            // Ok(Some(Value::List(out.into_iter().map(Value::from).collect())))
               Ok(Some(Value::List(out.into_iter().map(Value::from).collect())))
           } else {
             let string_val = out[0].clone();
              Ok(Some(Value::from(string_val.to_string())))
-          }
-
+          };
+          // let result = match val.get("type").unwrap().as_str() {
+          //   "String" => {
+          //     let string_val = out[0].clone();
+          //     Ok(Some(Value::from(string_val.to_string())))
+          //   },
+          //   "Int" => {
+          //     let string_val = out[0].clone();
+          //     Ok(Some(Value::from(string_val.to_string().parse::<i32>().unwrap())))
+          //   },
+          //   "Boolean" => {
+          //     let string_val = out[0].clone();
+          //     Ok(Some(Value::from(string_val.to_string().parse::<bool>().unwrap())))
+          //   },
+          //   "Float" => {
+          //     let string_val = out[0].clone();
+          //     Ok(Some(Value::from(string_val.to_string().parse::<f32>().unwrap())))
+          //   },
+          //   "ID" => {
+          //     let string_val = out[0].clone();
+          //     Ok(Some(Value::from(string_val.to_string())))
+          //   },
+          //   "[String]" => Ok(Some(Value::List(out.into_iter().map(Value::from).collect()))),
+          //   "[Int]" => Ok(Some(Value::List(out.into_iter().map(|x| x.parse::<i32>().unwrap()).map(Value::from).collect()))),
+          //   "[Boolean]" => Ok(Some(Value::List(out.into_iter().map(|x| x.parse::<bool>().unwrap()).map(Value::from).collect()))),
+          //   "[Float]" => Ok(Some(Value::List(out.into_iter().map(|x| x.parse::<f32>().unwrap()).map(Value::from).collect()))),
+          //   "[ID]" => Ok(Some(Value::List(out.into_iter().map(Value::from).collect()))),
+          //   _ => Ok(Some(Value::List(out.into_iter().map(Value::from).collect()))),
+          // };
+          // return result.clone();
         })
     ).description(val.get("description").unwrap_or(&"No docs yet!".to_string()));
     model = model.field(field);
