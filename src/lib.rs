@@ -14,30 +14,14 @@ use std::collections::HashMap;
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use async_graphql::extensions::ApolloTracing;
 use serde_json::json;
-use serde::{Serialize, Deserialize};
-use std::env;
 
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(untagged)]
-enum StringOrStringVec {
-    String(String),
-    VecString(Vec<String>),
-    Float(f32),
-    VecFloat(Vec<f32>),
-    Boolean(bool),
-    VecBoolean(Vec<bool>),
-    ID(String),
-    VecID(Vec<String>),
-    Int(i32),
-    VecInt(Vec<i32>)
-}
+mod config;
+mod types;
+
+use config::constants::get_env;
+use types::{StringOrStringVec, Context};
 
 
-#[derive(Debug, Serialize, Deserialize)]
-struct PythonResponse {
-  images: StringOrStringVec,
-  tokens: StringOrStringVec,
-}
 
 async fn index(schema: web::Data<Schema>, req: GraphQLRequest) -> GraphQLResponse {
   let inner = req.into_inner();
@@ -45,37 +29,25 @@ async fn index(schema: web::Data<Schema>, req: GraphQLRequest) -> GraphQLRespons
 }
 
 async fn index_graphiql() -> Result<HttpResponse> {
+  let env = get_env();
   Ok(HttpResponse::Ok()
       .content_type("text/html; charset=utf-8")
-      .body(playground_source(GraphQLPlaygroundConfig::new("http://localhost:8000")))
+      .body(playground_source(GraphQLPlaygroundConfig::new(&format!("http://{}:{}", env.graphql_host, env.graphql_port))))
     )
-}
-
-struct Context {
-    zmq_sender: Mutex<zmq::Socket>,
 }
 
 #[actix_web::main]
 pub async fn start_server(query: Object, model: Object) -> std::io::Result<()> {
-
-  match env::var("RUST_QUIET") {
-      Ok(v) => {
-        if v != "true" {
-          println!("loggin1");
-          env_logger::init();
-        }
-      },
-      _ => {
-        println!("loggin2");
-        env_logger::init()
-      }
+  let env = get_env();
+  if !env.rust_quiet {
+    env_logger::init();
   }
 
   let zmq_context = zmq::Context::new();
   let context = Context {
       zmq_sender: Mutex::new(zmq_context.socket(zmq::REQ).unwrap()),
   };
-  assert!(context.zmq_sender.lock().unwrap().bind(&format!("tcp://*:{}", env::var("ZEROMQ_PORT").unwrap_or("5555".to_string()))).is_ok());
+  assert!(context.zmq_sender.lock().unwrap().bind(&format!("tcp://*:{}", env.zeromq_port)).is_ok());
 
   let schema = Schema::build(query.type_name(), None, None)
       .register(model)
@@ -94,7 +66,7 @@ pub async fn start_server(query: Object, model: Object) -> std::io::Result<()> {
         .service(web::resource("/").guard(guard::Post()).to(index))
         .service(web::resource("/graphql").guard(guard::Get()).to(index_graphiql))
   })
-     .bind("127.0.0.1:8000")?
+     .bind(env.graphql_endpoint)?
   .run()
   .await  
 }
