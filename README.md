@@ -1,4 +1,4 @@
-# gqlwrapper
+# FastQL
 
 ## TODO
 
