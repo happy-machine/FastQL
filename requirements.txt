@@ -1,4 +1,4 @@
-maturin==0.13.7
+maturin==0.14
 pyzmq==24.0.1
 tomli==2.0.1
 zmq==0.0.0
