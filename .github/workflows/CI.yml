@@ -74,8 +74,8 @@ jobs:
       - name: Publish to PyPI
         uses: messense/maturin-action@v1
         env:
-          MATURIN_USERNAME: happy-machine
-          MATURIN_PASSWORD: WiffNkK!J3H8Lw8
+          MATURIN_USERNAME: __token__
+          MATURIN_PASSWORD: pypi-AgEIcHlwaS5vcmcCJGYzMjhjZWRjLTBjNWUtNGExNi04OGJiLWU0NDg1NmJmNjJhZgACKlszLCI1ZTZlYTY5Ni1iNzQyLTRhMDktODZmYS1lN2JiMDhmYjk2MmYiXQAABiDfNEp8oYEK4bbvuDGeKV8Ux2mw_3qzqym5RZMUkD6Fig
         with:
           command: upload
           args: --skip-existing *
