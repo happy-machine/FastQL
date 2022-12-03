@@ -32,7 +32,7 @@ fn get_bool(env_var: &String) -> bool {
                 return true;
             }
         },
-        Err(e) => panic!("{}", e),
+        Err(e) => return false,
     }
 
 }
