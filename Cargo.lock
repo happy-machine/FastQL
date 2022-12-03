@@ -858,6 +858,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0206175f82b8d6bf6652ff7d71a1e27fd2e4efde587fd368662814d6ec1d9ce0"
 
 [[package]]
+name = "fasqlapi"
+version = "0.1.1"
+dependencies = [
+ "actix-cors",
+ "actix-web",
+ "async-graphql",
+ "async-graphql-actix-web",
+ "env_logger",
+ "pyo3",
+ "serde",
+ "serde_json",
+ "zmq",
+]
+
+[[package]]
 name = "fast_chemail"
 version = "0.9.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1551,21 +1566,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3acd125665422973a33ac9d3dd2df85edad0f4ae9b00dafb1a05e43a9f5ef8e7"
 dependencies = [
  "winapi",
-]
-
-[[package]]
-name = "rust_fastql"
-version = "0.1.0"
-dependencies = [
- "actix-cors",
- "actix-web",
- "async-graphql",
- "async-graphql-actix-web",
- "env_logger",
- "pyo3",
- "serde",
- "serde_json",
- "zmq",
 ]
 
 [[package]]

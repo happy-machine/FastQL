@@ -187,7 +187,7 @@ fn init<'a>(
 }
 
 #[pymodule]
-#[pyo3(name = "rust_fastql")]
+#[pyo3(name = "fastqlapi")]
 fn st_df_2(_py: Python, m: &PyModule) -> PyResult<()> {
   m.add_function(wrap_pyfunction!(init, m)?)?;
   Ok(())
