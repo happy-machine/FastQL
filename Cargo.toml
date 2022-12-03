@@ -1,11 +1,11 @@
 [package]
-name = "rust-fastql"
+name = "rust_fastql"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
-name = "fastql"
+name = "rust_fastql"
 crate-type = ["cdylib"]
 
 [dependencies]

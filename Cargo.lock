@@ -1554,7 +1554,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rust-fastql"
+name = "rust_fastql"
 version = "0.1.0"
 dependencies = [
  "actix-cors",
