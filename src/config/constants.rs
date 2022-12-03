@@ -1,5 +1,4 @@
 use std::env;
-
 pub struct Env {
     pub zeromq_port: String,
     pub graphql_host: String,
@@ -19,7 +18,7 @@ fn create_url() -> String {
                 return format!("127.0.0.1:{}", port);
             }
         },
-        Err(e) => panic!("{}", e),
+        Err(e) =>return format!("127.0.0.1:{}", port),
     }
 }
 

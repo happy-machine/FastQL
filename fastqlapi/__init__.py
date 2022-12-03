@@ -2,5 +2,5 @@
 from fastqlapi import *
 
 # export vanilla_python.py functions as vanilla_python module
-from . import wrapper
-from . import test_schema
+from .wrapper import fastql_server
+from .test_schema import test_args, test_fields
