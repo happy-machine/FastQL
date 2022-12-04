@@ -1,6 +1,6 @@
 import os;
 import zmq;
-import fastql;
+import fastqlapi;
 import json;
 
 class Wrapper:
@@ -11,11 +11,11 @@ class Wrapper:
         self.fields = {}
         self.context = zmq.Context()
     def listen(self):
-        fastql.init(self.args, self.fields)
-        print(f"Started GraphQL server on http//{os.environ['GRAPHQL_HOST'] or 'localhost'}:{os.environ['GRAPHQL_PORT'] or '8000'}.")
+        fastqlapi.init(self.args, self.fields)
+        print(f"Started GraphQL server on http//{os.getenv('GRAPHQL_HOST', default='localhost')}:{os.getenv('GRAPHQL_PORT', default='8000')}.")
         while True:
             socket = self.context.socket(zmq.REP)
-            socket.connect(f"tcp://{os.environ['ZEROMQ_HOST'] or 'localhost'}:{os.environ['ZEROMQ_PORT' or '5555']}")
+            socket.connect(f"tcp://{os.getenv('ZEROMQ_HOST', default='localhost')}:{os.getenv('ZEROMQ_PORT', default='5555')}")
             while True:
                 message = socket.recv_string()
                 parsed = json.loads(message)
