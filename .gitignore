@@ -71,3 +71,5 @@ docs/_build/
 
 # Pyenv
 .python-version
+
+python/fastqlapi/fastqlapi.cpython-310-darwin.so
