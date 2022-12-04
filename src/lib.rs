@@ -119,11 +119,21 @@ fn init<'a>(
       "Boolean" => (TypeRef::named(TypeRef::BOOLEAN), 3 ),
       "Float" => (TypeRef::named(TypeRef::FLOAT), 4 ),
       "ID" => (TypeRef::named(TypeRef::ID), 5 ),
+      "String!" => (TypeRef::named_nn(TypeRef::STRING), 1 ),
+      "Int!" => (TypeRef::named_nn(TypeRef::INT), 2 ),
+      "Boolean!" => (TypeRef::named_nn(TypeRef::BOOLEAN), 3 ),
+      "Float!" => (TypeRef::named_nn(TypeRef::FLOAT), 4 ),
+      "ID!" => (TypeRef::named_nn(TypeRef::ID), 5 ),
       "[String]" => (TypeRef::named_list(TypeRef::STRING), 6 ),
       "[Int]" => (TypeRef::named_list(TypeRef::INT), 7 ),
       "[Boolean]" => (TypeRef::named_list(TypeRef::BOOLEAN), 8 ),
       "[Float]" => (TypeRef::named_list(TypeRef::FLOAT), 9 ),
       "[ID]" => (TypeRef::named_list(TypeRef::ID), 10 ),
+      "[String]!" => (TypeRef::named_list_nn(TypeRef::STRING), 6 ),
+      "[Int]!" => (TypeRef::named_list_nn(TypeRef::INT), 7 ),
+      "[Boolean]!" => (TypeRef::named_list_nn(TypeRef::BOOLEAN), 8 ),
+      "[Float]!" => (TypeRef::named_list_nn(TypeRef::FLOAT), 9 ),
+      "[ID]!" => (TypeRef::named_list_nn(TypeRef::ID), 10 ),
       _ => panic!("Type {:?} is not allowed", gql_type)
     };
     return out

@@ -5,6 +5,7 @@ pub struct Env {
     pub graphql_endpoint: String,
     pub graphql_port: String,
     pub rust_quiet: bool,
+    pub tracing: bool,
 }
 
 fn create_url() -> String {
@@ -41,6 +42,7 @@ pub fn get_env() -> Env {
         graphql_host: env::var("GRAPHQL_HOST").unwrap_or("localhost".to_string()),
         graphql_endpoint: create_url(),
         graphql_port: env::var("GRAPHQL_PORT").unwrap_or("8000".to_string()),
-        rust_quiet: get_bool(&"RUST_QUIET".to_string())
+        rust_quiet: get_bool(&"RUST_QUIET".to_string()),
+        tracing: get_bool(&"TRACING".to_string())
     };
 }

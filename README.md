@@ -36,7 +36,8 @@ fastql_server.start(callback=test, args=testargs, fields=testfields)
 ```
 
 <br/>
-FastQL implements all the basic GraphQL types and array types, **but not required types yet**.
+FastQL implements all the basic GraphQL types and array types, including required types but not currently
+required subtypes (an element of a list).
 
 ### Environment variables
 
