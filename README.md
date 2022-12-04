@@ -1,4 +1,4 @@
-# FastlQL API
+# FastQL API
 
 Spin up a blazing fast rust GraphQL server in one line of python code.
 
@@ -36,7 +36,7 @@ fastql_server.start(callback=test, args=testargs, fields=testfields)
 ```
 
 <br/>
-FastQL implements all the basic GraphQL types and array types, **but not required types yet**.
+FastQL implements all the basic GraphQL types and array types, but not required types yet.
 
 ### Environment variables
 
