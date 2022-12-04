@@ -1,7 +1,7 @@
 <!-- ![Logo](./fastql-logo.png =100x100) -->
 <img src="fastql-logo.png" width="100" height="100">
 
-## FastQL API
+## FastQL Inference Server
 
 Spin up a blazing fast rust GraphQL server around your ML model in one line of python code.
 
