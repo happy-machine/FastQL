@@ -2,7 +2,7 @@
 
 Spin up a blazing fast rust GraphQL server in one line of python code.
 
-**NB. This is currently prototype only**
+**NB. This is currently prototype only, not suitable for production**
 
 #### How to:
 
