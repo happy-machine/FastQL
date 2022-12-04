@@ -4,8 +4,7 @@
 
 Spin up a blazing fast rust GraphQL server in one line of python code.
 
-**NB. This is currently prototype only**
-<br/>
+**NB. This is currently prototype only, not suitable for production.**
 
 #### How to:
 
@@ -48,11 +47,17 @@ Under the hood FastQL uses the actix rust web server which is currently no.7 fas
 
 ### Environment variables
 
-- RUST_LOG='debug'
-  Rust log level
-- RUST_BACKTRACE=1
-  Add rust backtrace to log
-- RUST_QUIET=''
-  No rust logs
-- GRAPHQL_HOST='localhost'
-- GRAPHQL_PORT='8020'
+**GRAPHQL_HOST**
+Default localhost
+
+**GRAPHQL_PORT**
+Default 8000
+
+**RUST_LOG**
+Rust log level | default 'debug'
+
+**RUST_BACKTRACE**
+Add rust backtrace to log | default 1
+
+**RUST_QUIET**
+No rust logs | default false
