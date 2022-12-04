@@ -1,14 +1,17 @@
+<!-- ![Logo](./fastql-logo.png =100x100) -->
+<img src="fastql-logo.png" width="100" height="100">
 # FastQL API
 
 Spin up a blazing fast rust GraphQL server in one line of python code.
 
 **NB. This is currently prototype only**
+<br/>
 
 #### How to:
 
 `pip install fastqlapi`
 
-and visit localhost:8000/graphiql for the graphql playground UI
+Visit localhost:8000/graphiql for the graphql playground UI or make a request to localhost:8000
 
 example:
 
