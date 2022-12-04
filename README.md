@@ -1,6 +1,6 @@
 <!-- ![Logo](./fastql-logo.png =100x100) -->
 <img src="fastql-logo.png" width="100" height="100">
-# FastQL API
+#FastQL API
 
 Spin up a blazing fast rust GraphQL server in one line of python code.
 
