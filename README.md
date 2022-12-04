@@ -3,10 +3,9 @@
 
 ## FastQL API
 
-Spin up a blazing fast rust GraphQL server in one line of python code.
-It is built for serving up ML models and can therefore only enforce a flat schema.
+Spin up a blazing fast rust GraphQL server around your ML model in one line of python code.
 
-**NB. This is currently prototype only, not suitable for production.**
+**NB. This is currently prototype only, not suitable for production. Can only create flat / non nested schema.**
 
 #### How to:
 
