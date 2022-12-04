@@ -1,4 +1,4 @@
-# FastlQL API
+# FastQL API
 
 Spin up a blazing fast rust GraphQL server in one line of python code.
 
