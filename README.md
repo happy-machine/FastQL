@@ -39,6 +39,8 @@ fastql_server.start(callback=test, args=testargs, fields=testfields)
 FastQL implements all the basic GraphQL types and array types, including required types but not currently
 required subtypes (an element of a list).
 
+Under the hood FastQL uses the actix rust web server which is currently no.7 fastest web framework according to https://www.techempower.com/benchmarks/#section=data-r21. By comparison, python's FastAPI is no.279. I've observed about a 2x speed up across the example schema here vs a FastAPI/Ariadne python GraphQL server with the same schema.
+
 ### Environment variables
 
 - RUST_LOG='debug'
