@@ -8,6 +8,8 @@ Spin up a blazing fast rust GraphQL server in one line of python code.
 
 `pip install fastqlapi`
 
+and visit localhost:8000/graphiql for the graphql playground UI
+
 example:
 
 ```

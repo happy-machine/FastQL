@@ -52,7 +52,7 @@ pub async fn start_server(query: Object, model: Object) -> std::io::Result<()> {
   let schema = Schema::build(query.type_name(), None, None)
       .register(model)
       .register(query)
-      .extension(ApolloTracing)
+      // .extension(ApolloTracing)
       .data(context)
       .finish();
 
