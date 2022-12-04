@@ -50,11 +50,15 @@ Under the hood FastQL uses the actix rust web server which is currently no.7 fas
 
 **GRAPHQL_HOST**
 Default localhost
+
 **GRAPHQL_PORT**
 Default 8000
+
 **RUST_LOG**
 Rust log level | default 'debug'
+
 **RUST_BACKTRACE**
 Add rust backtrace to log | default 1
+
 **RUST_QUIET**
 No rust logs | default false
