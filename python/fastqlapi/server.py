@@ -12,7 +12,7 @@ class Wrapper:
         self.context = zmq.Context()
     def listen(self):
         fastqlapi.init(self.args, self.fields)
-        print(f"Started GraphQL server on http//{os.getenv('GRAPHQL_HOST', default='localhost')}:{os.getenv('GRAPHQL_PORT', default='8000')}.")
+        print(f"Started GraphQL server on http//:{os.getenv('GRAPHQL_HOST', default='localhost')}:{os.getenv('GRAPHQL_PORT', default='8000')}.")
         while True:
             socket = self.context.socket(zmq.REP)
             socket.connect(f"tcp://{os.getenv('ZEROMQ_HOST', default='localhost')}:{os.getenv('ZEROMQ_PORT', default='5555')}")

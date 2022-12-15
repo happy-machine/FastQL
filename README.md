@@ -1,4 +1,3 @@
-<!-- ![Logo](./fastql-logo.png =100x100) -->
 <img src="fastql-logo.png" width="100" height="100">
 # FastQL API
 
