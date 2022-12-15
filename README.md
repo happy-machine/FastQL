@@ -4,7 +4,7 @@
 
 Spin up a blazing fast rust GraphQL server around your ML model in one line of python code.
 
-**NB. This is currently prototype only, not suitable for production. Can only create flat / non nested schema.**
+**NB. This is currently prototype only, not suitable for production. Can only create flat / non nested schema. Make sure you set RUST_ENV to production if you are using it on a remote machine**
 
 #### How to:
 
