@@ -1,9 +1,10 @@
 <img src="fastql-logo.png" width="100" height="100">
-# FastQL API
 
-Spin up a blazing fast rust GraphQL server in one line of python code.
+## FastQL Inference Server
 
-**NB. This is currently prototype only, not suitable for production.**
+Spin up a blazing fast rust GraphQL server around your ML model in one line of python code.
+
+**NB. This is currently prototype only, not suitable for production. Can only create flat / non nested schema.**
 
 #### How to:
 
