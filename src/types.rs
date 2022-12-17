@@ -12,7 +12,7 @@ pub enum StringOrStringVec {
     VecBoolean(Vec<bool>),
     ID(String),
     VecID(Vec<String>),
-    Int(i32),
+    Int(i64),
     VecInt(Vec<i32>)
 }
 

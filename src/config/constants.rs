@@ -43,6 +43,6 @@ pub fn get_env() -> Env {
         graphql_endpoint: create_url(),
         graphql_port: env::var("GRAPHQL_PORT").unwrap_or("8000".to_string()),
         rust_quiet: get_bool(&"RUST_QUIET".to_string()),
-        tracing: get_bool(&"TRACING".to_string())
+        tracing: get_bool(&"TRACING".to_string()),
     };
 }

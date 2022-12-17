@@ -1,4 +1,4 @@
-from fastqlapi import fastql_server
+from server import fastql_server
 def test(**kwargs):
     print (kwargs['input'])
     return {

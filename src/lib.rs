@@ -48,13 +48,19 @@ pub async fn start_server(query: Object, model: Object) -> std::io::Result<()> {
       zmq_sender: Mutex::new(zmq_context.socket(zmq::REQ).unwrap()),
   };
   assert!(context.zmq_sender.lock().unwrap().bind(&format!("tcp://*:{}", env.zeromq_port)).is_ok());
-
-  let schema = Schema::build(query.type_name(), None, None)
+  let schema = if env.tracing { Schema::build(query.type_name(), None, None)
+    .register(model)
+    .register(query)
+    .extension(ApolloTracing)
+    .data(context)
+    .finish()
+  } else {
+    Schema::build(query.type_name(), None, None)
       .register(model)
       .register(query)
-      // .extension(ApolloTracing)
       .data(context)
-      .finish();
+      .finish()
+  };
 
   let schema_temp = schema.unwrap();
 
@@ -112,38 +118,45 @@ fn init<'a>(
     })
   );
 
-  fn type_factory(gql_type: &str) -> (async_graphql::dynamic::TypeRef, i32) {
+  fn type_factory<'a>(gql_type: &str) -> (async_graphql::dynamic::TypeRef, &'a str) {
     let out = match gql_type {
-      "String" => (TypeRef::named(TypeRef::STRING), 1 ),
-      "Int" => (TypeRef::named(TypeRef::INT), 2 ),
-      "Boolean" => (TypeRef::named(TypeRef::BOOLEAN), 3 ),
-      "Float" => (TypeRef::named(TypeRef::FLOAT), 4 ),
-      "ID" => (TypeRef::named(TypeRef::ID), 5 ),
-      "String!" => (TypeRef::named_nn(TypeRef::STRING), 1 ),
-      "Int!" => (TypeRef::named_nn(TypeRef::INT), 2 ),
-      "Boolean!" => (TypeRef::named_nn(TypeRef::BOOLEAN), 3 ),
-      "Float!" => (TypeRef::named_nn(TypeRef::FLOAT), 4 ),
-      "ID!" => (TypeRef::named_nn(TypeRef::ID), 5 ),
-      "[String]" => (TypeRef::named_list(TypeRef::STRING), 6 ),
-      "[Int]" => (TypeRef::named_list(TypeRef::INT), 7 ),
-      "[Boolean]" => (TypeRef::named_list(TypeRef::BOOLEAN), 8 ),
-      "[Float]" => (TypeRef::named_list(TypeRef::FLOAT), 9 ),
-      "[ID]" => (TypeRef::named_list(TypeRef::ID), 10 ),
-      "[String]!" => (TypeRef::named_list_nn(TypeRef::STRING), 6 ),
-      "[Int]!" => (TypeRef::named_list_nn(TypeRef::INT), 7 ),
-      "[Boolean]!" => (TypeRef::named_list_nn(TypeRef::BOOLEAN), 8 ),
-      "[Float]!" => (TypeRef::named_list_nn(TypeRef::FLOAT), 9 ),
-      "[ID]!" => (TypeRef::named_list_nn(TypeRef::ID), 10 ),
+      "String" => (TypeRef::named(TypeRef::STRING), "String"),
+      "Int" => (TypeRef::named(TypeRef::INT), "Int"),
+      "Boolean" => (TypeRef::named(TypeRef::BOOLEAN), "Boolean"),
+      "Float" => (TypeRef::named(TypeRef::FLOAT), "Float"),
+      "ID" => (TypeRef::named(TypeRef::ID), "ID"),
+      "String!" => (TypeRef::named_nn(TypeRef::STRING), "String"),
+      "Int!" => (TypeRef::named_nn(TypeRef::INT), "Int"),
+      "Boolean!" => (TypeRef::named_nn(TypeRef::BOOLEAN), "Boolean"),
+      "Float!" => (TypeRef::named_nn(TypeRef::FLOAT), "Float"),
+      "ID!" => (TypeRef::named_nn(TypeRef::ID), "ID"),
+      "[String]" => (TypeRef::named_list(TypeRef::STRING), "[String]"),
+      "[Int]" => (TypeRef::named_list(TypeRef::INT), "[Int]"),
+      "[Boolean]" => (TypeRef::named_list(TypeRef::BOOLEAN), "[Boolean]"),
+      "[Float]" => (TypeRef::named_list(TypeRef::FLOAT), "[Float]"),
+      "[ID]" => (TypeRef::named_list(TypeRef::ID), "[ID]"),
+      "[String]!" => (TypeRef::named_list_nn(TypeRef::STRING), "[String]"),
+      "[Int]!" => (TypeRef::named_list_nn(TypeRef::INT), "[Int]"),
+      "[Boolean]!" => (TypeRef::named_list_nn(TypeRef::BOOLEAN), "[Boolean]"),
+      "[Float]!" => (TypeRef::named_list_nn(TypeRef::FLOAT), "[Float]"),
+      "[ID]!" => (TypeRef::named_list_nn(TypeRef::ID), "[ID]" ),
       _ => panic!("Type {:?} is not allowed", gql_type)
     };
     return out
   }
 
   for (key, val) in params.iter() {
-    modelField = modelField.argument(InputValue::new(
-      key,
-      type_factory(val.get("type").unwrap().as_str()).0,
-    ).description(val.get("description").unwrap_or(&"No docs yet!".to_string())));
+    modelField = if val.get("description").unwrap().is_empty() { 
+      modelField.argument(InputValue::new(
+        key,
+        type_factory(val.get("type").unwrap().as_str()).0,
+      ))
+    } else {
+      modelField.argument(InputValue::new(
+        key,
+        type_factory(val.get("type").unwrap().as_str()).0,
+      ).description(val.get("description").unwrap()))
+    };
   }
 
   let query = Object::new("Query").field(
@@ -160,37 +173,41 @@ fn init<'a>(
           let value = field_hashmap.get(ctx.field().name());
           let out = value.unwrap().clone();
           let result = match type_factory_result.1 {
-            1 => {
+            "String" => {
               let string_val = out[0].clone();
               Ok(Some(Value::from(string_val.to_string())))
             },
-            2 => {
+            "Int" => {
               let string_val = out[0].clone();
               Ok(Some(Value::from(string_val.to_string().parse::<i32>().unwrap())))
             },
-            3 => {
+            "Boolean" => {
               let string_val = out[0].clone();
               Ok(Some(Value::from(string_val.to_string().parse::<bool>().unwrap())))
             },
-            4 => {
+            "Float" => {
               let string_val = out[0].clone();
               Ok(Some(Value::from(string_val.to_string().parse::<f32>().unwrap())))
             },
-            5 => {
+            "ID" => {
               let string_val = out[0].clone();
               Ok(Some(Value::from(string_val.to_string())))
             },
-            6 => Ok(Some(Value::List(out.into_iter().map(Value::from).collect()))),
-            7 => Ok(Some(Value::List(out.into_iter().map(|x| x.parse::<i32>().unwrap()).map(Value::from).collect()))),
-            8 => Ok(Some(Value::List(out.into_iter().map(|x| x.parse::<bool>().unwrap()).map(Value::from).collect()))),
-            9 => Ok(Some(Value::List(out.into_iter().map(|x| x.parse::<f32>().unwrap()).map(Value::from).collect()))),
-            10 => Ok(Some(Value::List(out.into_iter().map(Value::from).collect()))),
+            "[String]" => Ok(Some(Value::List(out.into_iter().map(Value::from).collect()))),
+            "[Int]" => Ok(Some(Value::List(out.into_iter().map(|x| x.parse::<i32>().unwrap()).map(Value::from).collect()))),
+            "[Boolean]" => Ok(Some(Value::List(out.into_iter().map(|x| x.parse::<bool>().unwrap()).map(Value::from).collect()))),
+            "[Float]" => Ok(Some(Value::List(out.into_iter().map(|x| x.parse::<f32>().unwrap()).map(Value::from).collect()))),
+            "[ID]" => Ok(Some(Value::List(out.into_iter().map(Value::from).collect()))),
             _ => Ok(Some(Value::List(out.into_iter().map(Value::from).collect()))),
           };
           return result.clone();
         })
-    ).description(val.get("description").unwrap_or(&"No docs yet!".to_string()));
-    model = model.field(field);
+    );
+    model = if val.get("description").unwrap().is_empty() { 
+      model.field(field)
+    } else {
+      model.field(field.description(val.get("description").unwrap()))
+    };
   }
   thread::spawn(move || start_server(query, model));
   Ok(())

@@ -61,3 +61,6 @@ Add rust backtrace to log | default 1
 
 **RUST_QUIET**
 No rust logs | default false
+
+**TRACING**
+Turn on Apollo tracing | default false
