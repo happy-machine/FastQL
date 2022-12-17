@@ -146,7 +146,7 @@ fn init<'a>(
   }
 
   for (key, val) in params.iter() {
-    modelField = if val.get("description").unwrap().is_empty() { 
+    modelField = if val.get("description").unwrap_or(&"".to_string()).is_empty() { 
       modelField.argument(InputValue::new(
         key,
         type_factory(val.get("type").unwrap().as_str()).0,
@@ -203,7 +203,7 @@ fn init<'a>(
           return result.clone();
         })
     );
-    model = if val.get("description").unwrap().is_empty() { 
+    model = if val.get("description").unwrap_or(&"".to_string()).is_empty() { 
       model.field(field)
     } else {
       model.field(field.description(val.get("description").unwrap()))
