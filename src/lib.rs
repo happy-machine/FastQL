@@ -146,16 +146,15 @@ fn init<'a>(
   }
 
   for (key, val) in params.iter() {
-    modelField = if val.get("description").unwrap_or(&"".to_string()).is_empty() { 
-      modelField.argument(InputValue::new(
+    modelField = match val.get("description") {
+        None => modelField.argument(InputValue::new(
+          key,
+          type_factory(val.get("type").unwrap().as_str()).0,
+        )),
+        Some(value) => modelField.argument(InputValue::new(
         key,
         type_factory(val.get("type").unwrap().as_str()).0,
-      ))
-    } else {
-      modelField.argument(InputValue::new(
-        key,
-        type_factory(val.get("type").unwrap().as_str()).0,
-      ).description(val.get("description").unwrap()))
+      ).description(value))
     };
   }
 
@@ -203,10 +202,10 @@ fn init<'a>(
           return result.clone();
         })
     );
-    model = if val.get("description").unwrap_or(&"".to_string()).is_empty() { 
-      model.field(field)
-    } else {
-      model.field(field.description(val.get("description").unwrap()))
+
+    model = match val.get("description") {
+      None => model.field(field),
+      Some(value) => model.field(field.description(value))
     };
   }
   thread::spawn(move || start_server(query, model));
