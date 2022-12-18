@@ -13,7 +13,7 @@ pub enum StringOrStringVec {
     ID(String),
     VecID(Vec<String>),
     Int(i64),
-    VecInt(Vec<i32>)
+    VecInt(Vec<i64>)
 }
 
 pub struct Context {

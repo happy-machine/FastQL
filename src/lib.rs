@@ -179,7 +179,7 @@ fn init<'a>(
             },
             "Int" => {
               let string_val = out[0].clone();
-              Ok(Some(Value::from(string_val.to_string().parse::<i32>().unwrap())))
+              Ok(Some(Value::from(string_val.to_string().parse::<i64>().unwrap())))
             },
             "Boolean" => {
               let string_val = out[0].clone();
@@ -194,7 +194,7 @@ fn init<'a>(
               Ok(Some(Value::from(string_val.to_string())))
             },
             "[String]" => Ok(Some(Value::List(out.into_iter().map(Value::from).collect()))),
-            "[Int]" => Ok(Some(Value::List(out.into_iter().map(|x| x.parse::<i32>().unwrap()).map(Value::from).collect()))),
+            "[Int]" => Ok(Some(Value::List(out.into_iter().map(|x| x.parse::<i64>().unwrap()).map(Value::from).collect()))),
             "[Boolean]" => Ok(Some(Value::List(out.into_iter().map(|x| x.parse::<bool>().unwrap()).map(Value::from).collect()))),
             "[Float]" => Ok(Some(Value::List(out.into_iter().map(|x| x.parse::<f32>().unwrap()).map(Value::from).collect()))),
             "[ID]" => Ok(Some(Value::List(out.into_iter().map(Value::from).collect()))),
