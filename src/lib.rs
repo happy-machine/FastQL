@@ -80,12 +80,13 @@ pub async fn start_server(query: Object, model: Object) -> std::io::Result<()> {
 
 #[pyfunction]
 fn init<'a>(
+  query_name: String,
   params: HashMap<String, HashMap<String, String>>,
   fields: HashMap<String, HashMap<String, String>>
 ) -> PyResult<()> {
-  let mut model = Object::new("Model");
+  let mut model = Object::new(&query_name);
   let mut modelField = Field::new(
-    "Model",
+    &query_name,
     TypeRef::named_nn(model.type_name()),
     |ctx| FieldFuture::new(async move{
       let selection_fields = &ctx.look_ahead().selection_fields();
@@ -93,7 +94,7 @@ fn init<'a>(
       for params in selection_fields[0].arguments().iter() {
         for inner_param in params {
           let inner_params: (async_graphql::Name, async_graphql::Value) = inner_param.clone();
-          params_hashmap.insert(inner_params.0.to_string(), inner_params.1.to_string().trim_matches('\"').to_string());
+          params_hashmap.insert(inner_params.0.to_string(), inner_params.clone().1.to_string().trim_matches('\"').to_string());
         }
       }
       let context = ctx.data::<Context>()?;
@@ -121,21 +122,25 @@ fn init<'a>(
   fn type_factory<'a>(gql_type: &str) -> (async_graphql::dynamic::TypeRef, &'a str) {
     let out = match gql_type {
       "String" => (TypeRef::named(TypeRef::STRING), "String"),
+      "URL" => (TypeRef::named(TypeRef::STRING), "String"),
       "Int" => (TypeRef::named(TypeRef::INT), "Int"),
       "Boolean" => (TypeRef::named(TypeRef::BOOLEAN), "Boolean"),
       "Float" => (TypeRef::named(TypeRef::FLOAT), "Float"),
       "ID" => (TypeRef::named(TypeRef::ID), "ID"),
       "String!" => (TypeRef::named_nn(TypeRef::STRING), "String"),
+      "URL!" => (TypeRef::named_nn(TypeRef::STRING), "String"),
       "Int!" => (TypeRef::named_nn(TypeRef::INT), "Int"),
       "Boolean!" => (TypeRef::named_nn(TypeRef::BOOLEAN), "Boolean"),
       "Float!" => (TypeRef::named_nn(TypeRef::FLOAT), "Float"),
       "ID!" => (TypeRef::named_nn(TypeRef::ID), "ID"),
       "[String]" => (TypeRef::named_list(TypeRef::STRING), "[String]"),
+      "[URL]" => (TypeRef::named_list(TypeRef::STRING), "[String]"),
       "[Int]" => (TypeRef::named_list(TypeRef::INT), "[Int]"),
       "[Boolean]" => (TypeRef::named_list(TypeRef::BOOLEAN), "[Boolean]"),
       "[Float]" => (TypeRef::named_list(TypeRef::FLOAT), "[Float]"),
       "[ID]" => (TypeRef::named_list(TypeRef::ID), "[ID]"),
       "[String]!" => (TypeRef::named_list_nn(TypeRef::STRING), "[String]"),
+      "[URL]!" => (TypeRef::named_list_nn(TypeRef::STRING), "[String]"),
       "[Int]!" => (TypeRef::named_list_nn(TypeRef::INT), "[Int]"),
       "[Boolean]!" => (TypeRef::named_list_nn(TypeRef::BOOLEAN), "[Boolean]"),
       "[Float]!" => (TypeRef::named_list_nn(TypeRef::FLOAT), "[Float]"),
@@ -178,7 +183,7 @@ fn init<'a>(
             },
             "Int" => {
               let string_val = out[0].clone();
-              Ok(Some(Value::from(string_val.to_string().parse::<i64>().unwrap())))
+              Ok(Some(Value::from(string_val.to_string().parse::<u64>().unwrap())))
             },
             "Boolean" => {
               let string_val = out[0].clone();
@@ -192,8 +197,8 @@ fn init<'a>(
               let string_val = out[0].clone();
               Ok(Some(Value::from(string_val.to_string())))
             },
-            "[String]" => Ok(Some(Value::List(out.into_iter().map(Value::from).collect()))),
-            "[Int]" => Ok(Some(Value::List(out.into_iter().map(|x| x.parse::<i64>().unwrap()).map(Value::from).collect()))),
+            "[String]" => Ok(Some(Value::List(value.unwrap().clone().into_iter().map(Value::from).collect()))),
+            "[Int]" => Ok(Some(Value::List(out.into_iter().map(|x| x.parse::<u64>().unwrap()).map(Value::from).collect()))),
             "[Boolean]" => Ok(Some(Value::List(out.into_iter().map(|x| x.parse::<bool>().unwrap()).map(Value::from).collect()))),
             "[Float]" => Ok(Some(Value::List(out.into_iter().map(|x| x.parse::<f32>().unwrap()).map(Value::from).collect()))),
             "[ID]" => Ok(Some(Value::List(out.into_iter().map(Value::from).collect()))),

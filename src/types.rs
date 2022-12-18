@@ -12,8 +12,8 @@ pub enum StringOrStringVec {
     VecBoolean(Vec<bool>),
     ID(String),
     VecID(Vec<String>),
-    Int(i64),
-    VecInt(Vec<i64>)
+    Int(u64),
+    VecInt(Vec<u64>)
 }
 
 pub struct Context {

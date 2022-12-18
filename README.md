@@ -2,7 +2,7 @@
 
 ## FastQL Inference Server
 
-Spin up a blazing fast rust GraphQL server around your ML model in one line of python code.
+Spin up a blazing fast rust GraphQL API and query around your ML model in one line of python code.
 
 **NB. This is currently prototype only, not suitable for production. Can only create flat / non nested schema. Make sure you set RUST_ENV to production if you are using it on a remote machine**
 
@@ -22,7 +22,7 @@ def test(**kwargs):
         'output': "test response",
     }
 
-fastql_server.start(callback=test, args={"input": { "type": "String", "description": "this is my input field"}}, fields={"output": { "type": "String"}})
+fastql_server.start(callback=test, query_name="Model", args={"input": { "type": "String", "description": "this is my input field"}}, fields={"output": { "type": "String"}})
 ```
 
 to try with an example schema:
@@ -40,10 +40,13 @@ fastql_server.start(callback=test, args=testargs, fields=testfields)
 ```
 
 <br/>
-FastQL implements all the basic GraphQL types and array types, including required types but not currently
-required subtypes (an element of a list).
 
-Under the hood FastQL uses the actix rust web server which is currently no.7 fastest web framework according to https://www.techempower.com/benchmarks/#section=data-r21. By comparison, python's FastAPI is no.279. I've observed about a 2x speed up across the example schema here vs a FastAPI/Ariadne python GraphQL server with the same schema.
+- FastQL implements all the basic GraphQL types and array types, including required types but not currently
+  required subtypes (an element of a list).
+
+- Using types URL, URL!, [URL] or [URL!] in python code will cause a valid URL as a returned value under that type to be downloaded.
+
+- Under the hood FastQL uses the actix rust web server which is currently no.5 fastest web framework according to https://www.techempower.com/benchmarks/#section=data-r21&test=composite. By comparison, python's FastAPI is at no.93. We've observed about a 2x speed up across the example schema here vs a FastAPI/Ariadne python GraphQL server with the same schema.
 
 ### Environment variables
 
@@ -64,3 +67,6 @@ No rust logs | default false
 
 **TRACING**
 Turn on Apollo tracing | default false
+
+**DOWNLOAD_PATH**
+Path to download files given as a value for URL types | default ./
