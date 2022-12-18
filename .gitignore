@@ -73,6 +73,6 @@ docs/_build/
 .python-version
 model.py
 test_model.py
-server.py
+/server.py
 python/fastqlapi/test_model.py
 python/fastqlapi/fastqlapi.cpython-310-darwin.so
