@@ -8,7 +8,7 @@ We include an example which can deploy and serve stable diffusion / runwayml / m
 
 We've observed about a **2x speed up** across the example schema vs a FastAPI/Ariadne python GraphQL server with identical schema. This is because although the model code is in python, the API is actually a Rust process running ActiX.
 
-We believe that the API code that is used to publish your model should be seperated from your model.
+We believe that API code that is used to publish your model should be seperated from the model itself.
 
 **Please note**
 
