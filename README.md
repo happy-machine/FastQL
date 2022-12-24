@@ -149,7 +149,7 @@ Turn on Apollo tracing | default false
 
 <br/>
 
-##Thank you
+## Thank you
 
 The folks at https://huggingface.co/
 The team at https://actix.rs/
