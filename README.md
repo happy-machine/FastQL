@@ -4,16 +4,18 @@
 
 Spin up a blazing fast Rust GraphQL API and query around your ML model in one line of python code.
 
-We include an example which can deploy and serve stable diffusion / runwayml / midjourney or any of the diffusers models in seconds
+We include an example which can deploy and serve stable diffusion / runwayml / midjourney or any of the diffusers models in seconds.
 
-We believe that the API code that is used to publish your model should be seperate from your model.
+We've observed about a **2x speed up** across the example schema vs a FastAPI/Ariadne python GraphQL server with identical schema. This is because although the model code is in python, the API is actually a Rust process running ActiX.
+
+We believe that the API code that is used to publish your model should be seperated from your model.
 
 **Please note**
 
 - Can only create flat / non nested schema.
-- Does not include an auth mechanism, you can implement auth using an API Gateway or proxy.
-- Make sure you set RUST_ENV to production if you are using it on a remote machine
-- This is currently a prototype and should not be used in production. (currently CORS is hardwired, this will be fixed soon)
+- Does not include an auth mechanism, you can implement auth using an API Gateway or auth proxy.
+- Make sure you set RUST_ENV to production if you are using it on a remote machine.
+- This is currently a prototype and should not be used in production (currently CORS is hardwired).
 
 <br/>
 
@@ -40,7 +42,7 @@ def infer(**kwargs):
 fastql_server.start(callback=infer, query_name="Model", args={"input": { "type": "String", "description": "this is my input field"}}, fields={"output": { "type": "String"}})
 ```
 
-**or** try with an example schema:
+**or** try with the example schema:
 
 ```python
 from fastqlapi import fastql_server, test_args, test_fields
@@ -56,7 +58,7 @@ fastql_server.start(callback=infer, args=testargs, fields=testfields)
 
 <br/>
 
-## How to spin up our example 'any diffusers API' using Docker insecurely on AWS EC2
+## How to spin up our example 'Any diffusers API' using Docker insecurely on AWS EC2
 
 - Sign up at https://huggingface.co/ to get your free ACCESS_TOKEN
 - Launch an EC2 GPU powered instance (for example p3.2xlarge)
@@ -144,3 +146,12 @@ No rust logs | default false
 
 **TRACING**
 Turn on Apollo tracing | default false
+
+<br/>
+
+##Thank you
+
+The folks at https://huggingface.co/
+The team at https://actix.rs/
+Sunli @ https://github.com/async-graphql/async-graphql
+The team at https://github.com/PyO3/maturin
