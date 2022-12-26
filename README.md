@@ -72,20 +72,20 @@ fastql_server.start(callback=infer, args=testargs, fields=testfields)
 
 ```bash
 EC2_INSTANCE_ID="`wget -q -O - http://169.254.169.254/latest/meta-data/instance-id || die \"wget instance-id has failed: $?\"`"
-export EC2_PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $EC2_INSTANCE_ID --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+export PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $EC2_INSTANCE_ID --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
 ```
 
 - Connect to your instance and use our example docker image on blahblah/blah or run your published docker image similar to:
 
 ```bash
 docker run -p 8020:8020 -p 8080:8080 \
-    -e EC2_PUBLIC_IP=$EC2_PUBLIC_IP \
+    -e PUBLIC_IP=$PUBLIC_IP \
     -e ACCESS_TOKEN="my_access_token" \
     -e MODEL_ID="stabilityai/stable-diffusion-2" \
     --gpus all repo/yourimage:latest
 ```
 
-- You can `echo $EC2_PUBLIC_IP` to get your public IP or find it in your EC2 console instance details
+- You can `echo $PUBLIC_IP` to get your public IP or find it in your EC2 console instance details
 - Connect to {{EC2_PUBLIC IP}}:8020/graphql to visit your new GraphQL API and make sure that the URL next to the history button contains {{EC2_PUBLIC IP}}:8020
 - An example query:
 

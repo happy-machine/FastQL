@@ -6,6 +6,13 @@ pub struct Env {
     pub graphql_port: String,
     pub rust_quiet: bool,
     pub tracing: bool,
+    pub disable_graphiql: bool,
+    pub enable_cors: bool,
+    pub cors_permissive: bool,
+    pub allowed_origin_header: String,
+    pub max_age_header: usize,
+    pub allow_authorization_header: bool,
+    pub allow_content_type_header: bool,
 }
 
 fn create_url() -> String {
@@ -15,11 +22,13 @@ fn create_url() -> String {
         Ok(v) => {
             if v == "localhost".to_string() && rust_env == "production".to_string() {
                 return format!("0.0.0.0:{}", port);
-            } else {
+            } else if  v == "localhost".to_string() {
                 return format!("127.0.0.1:{}", port);
+            } else {
+                return v;
             }
         },
-        Err(e) =>return format!("127.0.0.1:{}", port),
+        Err(e) => return format!("127.0.0.1:{}", port),
     }
 }
 
@@ -44,5 +53,12 @@ pub fn get_env() -> Env {
         graphql_port: env::var("GRAPHQL_PORT").unwrap_or("8000".to_string()),
         rust_quiet: get_bool(&"RUST_QUIET".to_string()),
         tracing: get_bool(&"TRACING".to_string()),
-    };
+        disable_graphiql: get_bool(&"DISABLE_GRAPHIQL".to_string()),
+        enable_cors: get_bool(&"ENABLE_CORS".to_string()),
+        cors_permissive: get_bool(&"CORS_PERMISSIVE".to_string()),
+        allowed_origin_header: env::var("ALLOWED_ORIGIN_HEADER").unwrap_or("*".to_string()),
+        max_age_header: env::var("MAX_AGE_HEADER").unwrap_or("3600".to_string()).parse().unwrap(),
+        allow_authorization_header: get_bool(&"ALLOW_AUTHORIZATION_HEADER".to_string()),
+        allow_content_type_header: get_bool(&"ALLOW_CONTENT_TYPE_HEADER".to_string()),
+    }; 
 }

@@ -18,3 +18,4 @@ serde_json = "1"
 async-graphql = { version = "5.0.2", features = ["dynamic-schema", "apollo_tracing"]}
 async-graphql-actix-web = "5.0.2"
 serde = "1.0.148"
+tap = "1.0.1"

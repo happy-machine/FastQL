@@ -1,5 +1,5 @@
 use pyo3::prelude::*;
-use actix_web::{guard, web, web::Data, App, HttpResponse, HttpServer, Result};
+use actix_web::{guard, web, web::Data, App, HttpResponse, HttpServer, Result, http::header};
 use core::panic;
 use std::sync::{ Mutex };
 use std::thread;
@@ -14,6 +14,7 @@ use std::collections::HashMap;
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use async_graphql::extensions::ApolloTracing;
 use serde_json::json;
+use tap::Pipe;
 
 mod config;
 mod types;
@@ -48,29 +49,32 @@ pub async fn start_server(query: Object, model: Object) -> std::io::Result<()> {
       zmq_sender: Mutex::new(zmq_context.socket(zmq::REQ).unwrap()),
   };
   assert!(context.zmq_sender.lock().unwrap().bind(&format!("tcp://*:{}", env.zeromq_port)).is_ok());
-  let schema = if env.tracing { Schema::build(query.type_name(), None, None)
+  let schema = Schema::build(query.type_name(), None, None)
     .register(model)
     .register(query)
-    .extension(ApolloTracing)
+    .pipe(|e| if env.tracing{e.extension(ApolloTracing)} else {e})
     .data(context)
-    .finish()
-  } else {
-    Schema::build(query.type_name(), None, None)
-      .register(model)
-      .register(query)
-      .data(context)
-      .finish()
-  };
+    .finish();
 
   let schema_temp = schema.unwrap();
 
   HttpServer::new(move || {
-    let cors = Cors::permissive();
+    let cors = if env.enable_cors {
+      Cors::permissive()
+    } else {
+      Cors::default()
+      .allowed_methods(vec!["GET", "POST"])
+      .pipe(|e| if env.allowed_origin_header == "*".to_string(){e.send_wildcard()} else {e.allowed_origin(&env.allowed_origin_header)})
+      .pipe(|e| if env.allow_authorization_header{e.allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])} else {e})
+      .pipe(|e| if env.allow_content_type_header{e.allowed_header(header::CONTENT_TYPE)} else {e})
+      .max_age(env.max_age_header)
+    };
+
     App::new()
     .wrap(cors)
         .app_data(Data::new(schema_temp.clone()))
         .service(web::resource("/").guard(guard::Post()).to(index))
-        .service(web::resource("/graphql").guard(guard::Get()).to(index_graphiql))
+        .pipe(|e| if !env.disable_graphiql { return e.service(web::resource("/graphql").guard(guard::Get()).to(index_graphiql))} else {return e})
   })
      .bind(env.graphql_endpoint)?
   .run()
