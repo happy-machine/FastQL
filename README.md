@@ -57,8 +57,8 @@ fastql_server.start(callback=infer, args=testargs, fields=testfields)
 ```
 
 <br/>
-
-## How to spin up our example 'Any diffusers API' over [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Diffusers-blue)](https://huggingface.co/diffusers/) using Docker insecurely on AWS EC2
+[![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Diffusers-blue)](https://huggingface.co/diffusers/)
+## How to spin up our example 'Any diffusers API' using Docker insecurely on AWS EC2
 
 - Sign up at https://huggingface.co/ to get your free ACCESS_TOKEN
 - Launch an EC2 GPU powered instance (for example p3.2xlarge)
