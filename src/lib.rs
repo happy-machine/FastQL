@@ -74,7 +74,7 @@ pub async fn start_server(query: Object, model: Object) -> std::io::Result<()> {
     .wrap(cors)
         .app_data(Data::new(schema_temp.clone()))
         .service(web::resource("/").guard(guard::Post()).to(index))
-        .pipe(|e| if !env.disable_graphiql { return e.service(web::resource("/graphql").guard(guard::Get()).to(index_graphiql))} else {return e})
+        .pipe(|e| if env.enable_graphiql { return e.service(web::resource("/graphql").guard(guard::Get()).to(index_graphiql))} else {return e})
   })
      .bind(env.graphql_endpoint)?
   .run()
@@ -124,16 +124,10 @@ fn init<'a>(
   );
 
   for (key, val) in params.iter() {
-    modelField = match val.get("description") {
-        None => modelField.argument(InputValue::new(
-          key,
-          type_factory(val.get("type").unwrap().as_str()).0,
-        )),
-        Some(value) => modelField.argument(InputValue::new(
+    modelField = modelField.argument(InputValue::new(
         key,
         type_factory(val.get("type").unwrap().as_str()).0,
-      ).description(value))
-    };
+    ).pipe(|e| if val.get("description").unwrap() == "" {return e} else {return e.description(val.get("description").unwrap())}));
   }
 
   let query = Object::new("Query").field(

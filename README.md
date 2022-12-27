@@ -135,6 +135,27 @@ The diffusers model ID for the huggingface diffusers model you want to launch
 **ACCESS_TOKEN**
 Your huggingface diffusers access token
 
+**ENABLE_GRAPHIQL**
+Will enable GraphiQL | default to true unless RUST_ENV is set to production (in which case setting ENABLE_GRAPHIQL=true will still overide)
+
+**ENABLE_CORS**
+default false
+
+**CORS_PERMISSIVE**
+Should be used in Development/Test only, allows all headers and origins, credentials supported, maximum age 1 hour does not send wildcard | default false
+
+**ALLOW_AUTHORIZATION_HEADER**
+default false
+
+**ALLOW_ORIGIN_HEADER**
+default false
+
+**ALLOW_CONTENT_TYPE_HEADER**
+default false
+
+**MAX_AGE_HEADER**
+default 3600
+
 **RUST_LOG**
 Rust log level | default 'debug'
 

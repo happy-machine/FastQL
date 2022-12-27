@@ -6,7 +6,7 @@ pub struct Env {
     pub graphql_port: String,
     pub rust_quiet: bool,
     pub tracing: bool,
-    pub disable_graphiql: bool,
+    pub enable_graphiql: bool,
     pub enable_cors: bool,
     pub cors_permissive: bool,
     pub allowed_origin_header: String,
@@ -45,6 +45,28 @@ fn get_bool(env_var: &String) -> bool {
     }
 
 }
+
+fn set_graphiql() -> bool {
+    match env::var("ENABLE_GRAPHIQL"){
+        Ok(v) => {
+            if v == "false".to_string() {
+                return false;
+            } else if v == "true".to_string() {
+                return true;
+            } else {
+                return true;
+            }
+        },
+        Err(e) => {
+            if env::var("RUST_ENV").unwrap_or("development".to_string()) == "production".to_string() {
+                return false;
+            } else {
+                return true;
+            }
+        },
+    };
+}
+
 pub fn get_env() -> Env {
     return Env {
         zeromq_port: env::var("ZEROMQ_PORT").unwrap_or("5555".to_string()),
@@ -53,7 +75,7 @@ pub fn get_env() -> Env {
         graphql_port: env::var("GRAPHQL_PORT").unwrap_or("8000".to_string()),
         rust_quiet: get_bool(&"RUST_QUIET".to_string()),
         tracing: get_bool(&"TRACING".to_string()),
-        disable_graphiql: get_bool(&"DISABLE_GRAPHIQL".to_string()),
+        enable_graphiql: set_graphiql(),
         enable_cors: get_bool(&"ENABLE_CORS".to_string()),
         cors_permissive: get_bool(&"CORS_PERMISSIVE".to_string()),
         allowed_origin_header: env::var("ALLOWED_ORIGIN_HEADER").unwrap_or("*".to_string()),
