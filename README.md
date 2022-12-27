@@ -117,6 +117,7 @@ The example API surfaces prompt, number_of_images, guidance_scale, number_infere
 
 - Under the hood FastQL uses the actix rust web server which is currently no.5 fastest web framework according to https://www.techempower.com/benchmarks/#section=data-r21&test=composite. By comparison, python's FastAPI is at no.93. We've observed about a 2x speed up across the example schema here vs a FastAPI/Ariadne python GraphQL server with the same schema.
   <br/>
+  <br/>
 
 ## Environment variables
 
