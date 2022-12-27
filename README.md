@@ -87,7 +87,7 @@ docker run -p 8020:8020 -p 8080:8080 \
 ```
 
 - You can `echo $PUBLIC_IP` to get your public IP or find it in your EC2 console instance details
-- Connect to {{EC2_PUBLIC IP}}:8020/graphql to visit your new GraphQL API and make sure that the URL next to the history button contains {{EC2_PUBLIC IP}}:8020
+- Connect to {{PUBLIC IP}}:8020/graphql to visit your new GraphQL API and make sure that the URL next to the history button contains {{EC2_PUBLIC IP}}:8020
 - An example query:
 
 ```graphql
