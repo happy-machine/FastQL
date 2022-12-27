@@ -12,10 +12,10 @@ We believe that API code that is used to publish your model should be seperated 
 
 **Please note**
 
+- **Does not include an auth mechanism, you can implement auth using an API Gateway or auth proxy**.
 - Can only create flat / non nested schema.
-- Does not include an auth mechanism, you can implement auth using an API Gateway or auth proxy.
 - Make sure you set RUST_ENV to production if you are using it on a remote machine.
-- This is currently a prototype and should not be used in production (currently CORS is hardwired).
+- This is currently a prototype and should not be used in production.
 
 <br/>
 
