@@ -170,6 +170,7 @@ Turn on Apollo tracing | default false
 
 <br/>
 ## License
+
 The code in this repo is released under the MIT license.
 
 ## Thank you
