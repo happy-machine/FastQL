@@ -27,7 +27,7 @@ pip install fastqlapi
 
 ## Usage
 
-Visit localhost:8000/graphiql for the graphql playground UI or make a request to localhost:8000
+Visit localhost:8000/graphiql for the graphql playground UI or make a request to localhost:8000.
 
 example:
 
@@ -57,18 +57,18 @@ fastql_server.start(callback=infer, args=testargs, fields=testfields)
 ```
 
 <br/>
-[![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Diffusers-blue)](https://huggingface.co/diffusers/).  
+## [![Hugging Face Diffusers](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Diffusers-blue)](https://huggingface.co/diffusers/)
 
-## How to spin up our example 'Any diffusers API' using Docker insecurely on AWS EC2
+## How to spin up our example hugging face diffusers GraphQL API using Docker insecurely on AWS EC2
 
-- Sign up at https://huggingface.co/ to get your free ACCESS_TOKEN
+- Sign up at https://huggingface.co/ to get your free ACCESS_TOKEN.
 - Launch an EC2 GPU powered instance (for example p3.2xlarge)
-- Search for NVIDIA GPU-Optimized PyTorch AMI in the Amazon Machine Image search bar
-- Select this AMI and configure storage to 64GIB
-- You will need to set a PEM key-pair, download and chmod the key on your local machine using chmod 400 {{key pair name}}
-- Launch your instance
-- In the security tab for your instance select the auto-created or chosen security group and add an inbound rule setting custom TCP and port 8020 (graphql api) to 0.0.0.0/0 (or more appropriate scoped access) and another setting port 8080 (image server) to 0.0.0.0/0
-- Setup aws configure with the command aws configure and enter access key details after creating an access key in the IAM panel
+- Search for NVIDIA GPU-Optimized PyTorch AMI in the Amazon Machine Image search bar.
+- Select this AMI and configure storage to 64GIB.
+- You will need to set a PEM key-pair, download and chmod the key on your local machine using chmod 400 {{key pair name}}.
+- Launch your instance.
+- In the security tab for your instance select the auto-created or chosen security group and add an inbound rule setting custom TCP and port 8000 (graphql api) to 0.0.0.0/0 (or more appropriate scoped access) and another setting port 8080 (image server) to 0.0.0.0/0.
+- Setup aws configure with the command aws configure and enter access key details after creating an access key in the IAM panel.
 - Run the following commands to set your public IP:
 
 ```bash
@@ -76,18 +76,18 @@ EC2_INSTANCE_ID="`wget -q -O - http://169.254.169.254/latest/meta-data/instance-
 export PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $EC2_INSTANCE_ID --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
 ```
 
-- Connect to your instance and use our example docker image on blahblah/blah or run your published docker image similar to:
+- Connect to your instance and use our example docker image on danfreshbc/fastqlapi-diffusers or run your published docker image similar to:
 
 ```bash
-docker run -p 8020:8020 -p 8080:8080 \
+docker run -p 8000:8000 -p 8080:8080 \
     -e PUBLIC_IP=$PUBLIC_IP \
     -e ACCESS_TOKEN="my_access_token" \
     -e MODEL_ID="stabilityai/stable-diffusion-2" \
-    --gpus all repo/yourimage:latest
+    --gpus all danfreshbc/fastqlapi-diffusers:0.3.3b
 ```
 
-- You can `echo $PUBLIC_IP` to get your public IP or find it in your EC2 console instance details
-- Connect to {{EC2_PUBLIC IP}}:8020/graphql to visit your new GraphQL API and make sure that the URL next to the history button contains {{EC2_PUBLIC IP}}:8020
+- You can `echo $PUBLIC_IP` to get your public IP or find it in your EC2 console instance details.
+- Connect to {{EC2_PUBLIC IP}}:8000/graphql to visit your new GraphQL API and make sure that the URL next to the history button contains {{EC2_PUBLIC IP}}:8000
 - An example query:
 
 ```graphql
@@ -114,10 +114,9 @@ The example API surfaces prompt, number_of_images, guidance_scale, number_infere
 - FastQL implements all the basic GraphQL types and array types, including required types but not currently
   required subtypes (an element of a list).
 
-- Using types URL, URL!, [URL] or [URL!] in python code will translate to GraphQL String equivalents, but will cause a valid URLreturned under that type to be downloaded.
+- Using types URL, URL!, [URL] or [URL!] in python code will translate to GraphQL String equivalents, but will cause a valid URL that is sent under that type to be downloaded.
 
-- Under the hood FastQL uses the actix rust web server which is currently no.5 fastest web framework according to https://www.techempower.com/benchmarks/#section=data-r21&test=composite. By comparison, python's FastAPI is at no.93. We've observed about a 2x speed up across the example schema here vs a FastAPI/Ariadne python GraphQL server with the same schema.
-  <br/>
+- Under the hood FastQL uses the actix rust web server which is currently no.5 fastest web framework according to [Tech Empower](https://www.techempower.com/benchmarks/#section=data-r21&test=composite). By comparison, Python's [FastAPI](https://fastapi.tiangolo.com/) is at no.93. We've observed about a 2x speed up across the example schema here vs a FastAPI/Ariadne python GraphQL server with the same schema.
   <br/>
 
 ## Environment variables
@@ -178,7 +177,7 @@ The code in this repo is released under the MIT license.
 
 ## Thank you
 
-The folks at https://huggingface.co/ \
-The team at https://actix.rs/ \
-Sunli @ https://github.com/async-graphql/async-graphql \
-The team at https://github.com/PyO3/maturin \
+The folks at [Hugging Face](https://huggingface.co/) \
+The team at [Actix](https://actix.rs/) \
+Sunli @ [Async-graphql.rs](https://github.com/async-graphql/async-graphql) \
+The team at [Maturin](https://github.com/PyO3/maturin)
