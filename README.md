@@ -173,6 +173,9 @@ Turn on Apollo tracing | default false
 ## Thank you
 
 The folks at https://huggingface.co/
+
 The team at https://actix.rs/
+
 Sunli @ https://github.com/async-graphql/async-graphql
+
 The team at https://github.com/PyO3/maturin
