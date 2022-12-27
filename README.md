@@ -57,9 +57,9 @@ fastql_server.start(callback=infer, args=testargs, fields=testfields)
 ```
 
 <br/>
-## [![Hugging Face Diffusers](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Diffusers-blue)](https://huggingface.co/diffusers/)
+## Example Diffusers GraphQL API [![Hugging Face Diffusers](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Diffusers-blue)](https://huggingface.co/diffusers/)
 
-## How to spin up our example hugging face diffusers GraphQL API using Docker insecurely on AWS EC2
+### How to spin up our example hugging face diffusers GraphQL API using Docker on AWS EC2
 
 - Sign up at https://huggingface.co/ to get your free ACCESS_TOKEN.
 - Launch an EC2 GPU powered instance (for example p3.2xlarge)
