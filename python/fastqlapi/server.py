@@ -14,7 +14,7 @@ class Wrapper:
         self.context = zmq.Context()
     def download(self, url):
         try:
-            subprocess.run(["wget", "-P", os.getenv('DOWNLOAD_PATH', default='./'), "-q", url])
+            subprocess.run(["wget", "-P", os.getenv('UPLOAD_PATH', default='./'), "-q", url])
         except subprocess.CalledProcessError:
             'Download failed, is wget installed?'
     def listen(self):
@@ -28,11 +28,6 @@ class Wrapper:
                 parsed = json.loads(message)
                 out = {}
                 for k,v in parsed.items():
-                    if self.args[k]['type'] in ["URL", "URL!"]:
-                        self.download(v)
-                    elif self.args[k]['type'] in ["[URL]", "[URL!]"]:         
-                        for url in json.loads(v):
-                            self.download(url)
                     try:
                       out[k] = json.loads(v)
                     except:

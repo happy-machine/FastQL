@@ -58,11 +58,7 @@ jobs:
     steps:
       - name: Env vars
         shell: bash
-        run: |
-          echo "PYPI_API_TOKEN: $PYPY_API"
-          echo "GH_REPO: $GH_REPO"
-          echo "GH_REPO_O: $GH_REPO_O"
-          echo "GH_T: $GH_T"
+        run: echo "Setting vars"
         env:
           PYPY_API: ${{ secrets.PYPI_API_TOKEN }}
           GH_REPO: ${{ github.repository }}
@@ -75,7 +71,7 @@ jobs:
         uses: messense/maturin-action@v1
         env:
           MATURIN_USERNAME: __token__
-          MATURIN_PASSWORD: pypi-AgEIcHlwaS5vcmcCJDE0MjIxZDJjLTllMDUtNDI0MC1iZGNhLTFjODc5NGQzNzkwZgACEVsxLFsiZmFzdHFsYXBpIl1dAAIsWzIsWyJlMmQwNzEwOS05YjgyLTRjOTgtYmFmZi0yMzMxMDI2Yzk3MDciXV0AAAYgHmSKNs76Tq_KoiXatuIqfJ0ExuIQ9wP_tKNlo9t-a_Y
+          MATURIN_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         with:
           command: upload
           args: --skip-existing *

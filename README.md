@@ -126,7 +126,7 @@ Default localhost
 **GRAPHQL_PORT**
 Default 8000
 
-**DOWNLOAD_PATH**
+**UPLOAD_PATH**
 Path to download files given as a value for URL types | default ./
 
 **MODEL_ID**
