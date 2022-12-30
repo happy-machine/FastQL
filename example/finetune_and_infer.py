@@ -3,8 +3,8 @@ import random
 import torch
 import shutil
 from fastqlapi import fastql_server
+from diffusers import StableDiffusionPipeline
 from subprocess import Popen
-from diffusers import StableDiffusionPipeline, EulerDiscreteScheduler
 import gdown
 
 model_id = os.getenv('MODEL_ID', 'stabilityai/stable-diffusion-2')

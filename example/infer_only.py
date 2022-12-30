@@ -5,9 +5,8 @@ from fastqlapi import fastql_server
 from diffusers import StableDiffusionPipeline, EulerDiscreteScheduler
 
 model_id = os.getenv('MODEL_ID', 'stabilityai/stable-diffusion-2')
-access_token = os.getenv('ACCESS_TOKEN', 'your_token')
 scheduler = EulerDiscreteScheduler.from_pretrained(model_id, subfolder='scheduler')
-pipe = StableDiffusionPipeline.from_pretrained(model_id, scheduler=scheduler, torch_dtype=torch.float16, access_token=access_token)
+pipe = StableDiffusionPipeline.from_pretrained(model_id, scheduler=scheduler, torch_dtype=torch.float16)
 pipe = pipe.to("cuda")
 
 def infer(**kwargs):
