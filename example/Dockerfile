@@ -6,4 +6,4 @@ RUN mkdir model
 COPY . /model
 WORKDIR /model
 RUN mkdir images
-CMD bash start_infer.sh
+CMD bash start_inference.sh

@@ -119,6 +119,10 @@ The example API surfaces prompt, number_of_images, guidance_scale, number_infere
 
 **NB. This should use a mutation, mutation support coming soon!**
 
+This example allows you to download a folder of images from google drive or individual gdrive image ids.
+It will then fintune the model on these images so you can run inference against them. This example will overwrite
+the model each time you upload new files.
+
 - Setup your instance as above but with a machine with more than 16GB ram for example m5.2xlarge
 - Use the following docker command:
 
@@ -172,9 +176,6 @@ Default localhost
 
 **GRAPHQL_PORT**
 Default 8000
-
-**UPLOAD_PATH**
-Path to download files given as a value for URL types | default ./
 
 **MODEL_ID**
 The diffusers model ID for the huggingface diffusers model you want to launch

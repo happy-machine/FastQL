@@ -1,11 +1,7 @@
-export MODEL_NAME="CompVis/stable-diffusion-v1-4"
-export INSTANCE_DIR="./uploads"
-export OUTPUT_DIR="./saved_models"
-echo "got $INSTANCE_PROMPT."
 accelerate launch --mixed_precision="fp16" train_dreambooth.py \
-  --pretrained_model_name_or_path=$MODEL_NAME  \
-  --instance_data_dir=$INSTANCE_DIR \
-  --output_dir=$OUTPUT_DIR \
+  --pretrained_model_name_or_path=$MODEL_ID  \
+  --instance_data_dir="./uploads" \
+  --output_dir="./saved_models" \
   --instance_prompt="$INSTANCE_PROMPT" \
   --resolution=512 \
   --train_batch_size=1 \

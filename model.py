@@ -8,5 +8,5 @@ def test(**kwargs):
 fastql_server.start(
     callback=test, 
     query_name="Test", 
-    args={"input": { "type": "String", "description": "my input"}}, 
+    args={"input": { "type": "String", "description": "A test input field."}}, 
     fields={"output": { "type": "String"}})

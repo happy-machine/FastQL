@@ -1,3 +1,3 @@
 ruby -run -e httpd ./images -p 8080 &
 source .env
-python3 infer_only.py
+python3 inference_only.py

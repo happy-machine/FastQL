@@ -81,7 +81,6 @@ pub async fn start_server(query: Object, model: Object) -> std::io::Result<()> {
   .await  
 }
 
-
 #[pyfunction]
 fn init<'a>(
   query_name: String,
@@ -124,12 +123,17 @@ fn init<'a>(
   );
 
   for (key, val) in params.iter() {
-    modelField = modelField.argument(InputValue::new(
+    modelField = match val.get("description") {
+      None => modelField.argument(InputValue::new(
         key,
         type_factory(val.get("type").unwrap().as_str()).0,
-    ).pipe(|e| if val.get("description").unwrap() == "" {return e} else {return e.description(val.get("description").unwrap())}));
+      )),
+      Some(value) => modelField.argument(InputValue::new(
+        key,
+        type_factory(val.get("type").unwrap().as_str()).0,
+      ).description(value))
+    };
   }
-
   let query = Object::new("Query").field(
     modelField
   );
