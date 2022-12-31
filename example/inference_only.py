@@ -10,7 +10,7 @@ pipe = StableDiffusionPipeline.from_pretrained(model_id, scheduler=scheduler, to
 pipe = pipe.to("cuda")
 
 def infer(**kwargs):
-  seed = kwargs.get('seed', torch.random.initial_seed())
+  seed = kwargs.get('seed', random.getrandbits(32))
   images = pipe(
     [kwargs['prompt']] * kwargs.get('number_of_images', 1),
     guidance_scale=kwargs.get('guidance_scale', 7.5),
@@ -20,7 +20,7 @@ def infer(**kwargs):
 
   messages = []
   for image in images:
-    hash = random.getrandbits(128)
+    hash = random.getrandbits(64)
     image.save(f"images/{hash}.png")
     messages.append(f"http://{os.environ['PUBLIC_IP']}:{os.environ['SERVER_PORT']}/{hash}.png")
   return {

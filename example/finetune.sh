@@ -1,3 +1,4 @@
+#!/bin/bash
 accelerate launch --mixed_precision="fp16" train_dreambooth.py \
   --pretrained_model_name_or_path=$MODEL_ID  \
   --instance_data_dir="./uploads" \
