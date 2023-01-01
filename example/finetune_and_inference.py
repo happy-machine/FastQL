@@ -31,7 +31,7 @@ fastql_server.start(callback=run, query_name="Model",
   args={
     "prompt": {
       "type": "String",
-      "description": "Your sexy prompt"
+      "description": "A description of the image you want to generate, try to be specific ie.Cute Grey Cat with blue eyes, wearing a bowtie"
     },
     "fine_tune_photo_description": {
       "type": "String",

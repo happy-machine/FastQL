@@ -32,7 +32,7 @@ fastql_server.start(callback=infer, query_name="Model",
   args={
     "prompt": {
       "type": "String",
-      "description": "Your sexy prompt"
+      "description": "A description of the image you want to generate, try to be specific ie.Cute Grey Cat with blue eyes, wearing a bowtie"
     },
     "number_of_images": {
       "type": "Int",
