@@ -26,6 +26,7 @@ We've observed about a **2x speed up** across the example schema vs a FastAPI/Ar
 - FastQL gives you GraphQL playground for testing and demonstrating your prototype models.
 - Because ML models are typically sequential in terms of request response pattern, requests to the model are **always** blocking,response time is the important bottleneck FastQL is focused on reducing.
 <br/>
+
 ## Installation
 
 ```bash
