@@ -62,7 +62,6 @@ Will spin up the below GraphQL Playground ready for requests on localhost:8000/g
 <img src="assets/Playground-screenshot.png" width="1000" height="600">
 
 <br/>
-<br/>
 
 ### Spin up an example hugging face diffusers GraphQL API using Docker on AWS EC2
 
@@ -120,7 +119,7 @@ You can change MODEL_ID to one of the following to try a different diffusers mod
 The example API surfaces prompt, number_of_images, guidance_scale, number_inference_steps and seed and returns an array of images or a seed.
 
 The example uses a ruby webserver to serve up the content of an images directory which it will deposit generated images into on port 8080.
-
+<br/>
 ### A diffusers example implementing fine tuning using dreambooth
 
 **NB. Mutation support coming soon.**
