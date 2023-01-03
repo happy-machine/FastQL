@@ -59,7 +59,7 @@ Will spin up the below GraphQL Playground ready for requests on localhost:8000/g
 }
 ```
 
-<img src="assets/playground-screenshot.png" width="1000" height="600">
+<img src="assets/Playground-screenshot.png" width="1000" height="600">
 
 <br/>
 <br/>
