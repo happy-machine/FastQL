@@ -120,6 +120,7 @@ The example API surfaces prompt, number_of_images, guidance_scale, number_infere
 
 The example uses a ruby webserver to serve up the content of an images directory which it will deposit generated images into on port 8080.
 <br/>
+<br/>
 ### A diffusers example implementing fine tuning using dreambooth
 
 **NB. Mutation support coming soon.**
