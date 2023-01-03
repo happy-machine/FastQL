@@ -1,12 +1,8 @@
 from fastqlapi import fastql_server
-
-def test(**kwargs):
+def infer(**kwargs):
+    print (kwargs['input'])
     return {
-        'output': kwargs['input'],
+        'output': "test response",
     }
 
-fastql_server.start(
-    callback=test, 
-    query_name="Test", 
-    args={"input": { "type": "String", "description": "A test input field."}}, 
-    fields={"output": { "type": "String"}})
+fastql_server.start(callback=infer, query_name="Model", args={"input": { "type": "String", "description": "this is my input field"}}, fields={"output": { "type": "String"}})

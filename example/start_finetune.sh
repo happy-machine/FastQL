@@ -3,7 +3,7 @@ cd diffusers && pip install -e .
 cd ~/diffusers/examples/dreambooth
 export PATH="/home/ubuntu/.local/bin:$PATH"
 pip install -r requirements.txt
-pip install markupsafe==2.0.1
+pip install markupsafe==2.0.1 datasets
 # TBD ^ what up?
 mkdir uploads saved_models images
 chmod 777 uploads saved_models images

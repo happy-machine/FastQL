@@ -1,4 +1,4 @@
-<img src="fastql-logo.png" width="100" height="100">
+<img src="assets/fastql-logo.png" width="60" height="80">
 
 # FastQL Inference Server
 
@@ -34,8 +34,6 @@ pip install fastqlapi
 
 ## Usage
 
-Visit localhost:8000/graphiql for the GraphQL Playground UI or make a request to localhost:8000.
-
 You can call **any** callback with each GraphQL query recieved by the server, the callback must return a dict with values for each field you wish to return. The returned type must match the type defined for the field in the fields dict given to the start method (see below).
 
 For example:
@@ -51,20 +49,19 @@ def infer(**kwargs):
 fastql_server.start(callback=infer, query_name="Model", args={"input": { "type": "String", "description": "this is my input field"}}, fields={"output": { "type": "String"}})
 ```
 
-**or** try with the example schema:
+Will spin up the below GraphQL Playground ready for requests on localhost:8000/graphiql or you can make a GraphQL request to localhost:8000 like:
 
-```python
-from fastqlapi import fastql_server, test_args, test_fields
-
-def infer(**kwargs):
-    print (kwargs['prompt'])
-    return {
-        "tokens": ["example", "tokens"],
-    }
-
-fastql_server.start(callback=infer, args=testargs, fields=testfields)
+```graphql
+{
+  Model(input="to send"){
+    output
+  }
+}
 ```
 
+<img src="assets/playground-screenshot.png" width="1000" height="600">
+
+<br/>
 <br/>
 
 ### Spin up an example hugging face diffusers GraphQL API using Docker on AWS EC2
@@ -76,7 +73,8 @@ fastql_server.start(callback=infer, args=testargs, fields=testfields)
 - Select this AMI and configure storage to 64GIB.
 - You will need to set a PEM key-pair, download and chmod the key on your local machine using chmod 400 {{key pair name}}.
 - Launch your instance.
-- In the security tab for your instance select the auto-created or chosen security group and add an inbound rule setting custom TCP and port 8000 (graphql api) to 0.0.0.0/0 (or more appropriate scoped access) and another setting port 8080 (image server) to 0.0.0.0/0.-
+- Get your current IPV4 IP (for example from [whatsmyip](whatsmyip.org))
+- In the security tab for your instance select the auto-created or chosen security group and add an inbound rule setting custom TCP and port 8000 (graphql api) with source to {{Your IPV4 IP}} (or 0.0.0.0/0 to make it public) and another identical rule for port 8080 (the image server)
 - Sign up at https://huggingface.co/ to get your free ACCESS_TOKEN.
 - Setup aws configure with the command aws configure and enter access key details after creating an access key in the IAM panel.
 - Run the following commands to set your public IP:
@@ -86,7 +84,8 @@ EC2_INSTANCE_ID="`wget -q -O - http://169.254.169.254/latest/meta-data/instance-
 export PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $EC2_INSTANCE_ID --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
 ```
 
-- Connect to your instance and use our example docker image on danfreshbc/fastqlapi-diffusers or run your published docker image similar to:
+- `echo $PUBLIC_IP` and make a note of this public ip you will use to connect to the API
+- Connect to your instance and use the example docker image on danfreshbc/fastqlapi-diffusers or run your published docker image similar to:
 
 ```bash
 docker run -p 8000:8000 -p 8080:8080 \
@@ -95,9 +94,10 @@ docker run -p 8000:8000 -p 8080:8080 \
     --gpus all danfreshbc/fastqlapi-diffusers:latest
 ```
 
-- You can `echo $PUBLIC_IP` to get your public IP or find it in your EC2 console instance details.
-- Connect to {{EC2_PUBLIC IP}}:8000/graphql to visit your new GraphQL API and make sure that the URL next to the history button contains {{EC2_PUBLIC IP}}:8000
-- An example query:
+Once Docker has finished installing...
+
+- Connect to {{PUBLIC IP}}:8000/graphql to visit your new GraphQL API and make sure that the URL next to the history button contains {{PUBLIC IP}}:8000
+- Try the following example query in the GraphQL Playground console:
 
 ```graphql
 {
@@ -106,6 +106,8 @@ docker run -p 8000:8000 -p 8080:8080 \
   }
 }
 ```
+
+- In the response on the right you will get back a URL you can visit to see the generated image.
 
 You can change MODEL_ID to one of the following to try a different diffusers model for example:
 
@@ -121,11 +123,11 @@ The example uses a ruby webserver to serve up the content of an images directory
 
 ### A diffusers example implementing fine tuning using dreambooth
 
-**NB. This should use a mutation, mutation support coming soon.**
+**NB. Mutation support coming soon.**
 
-This example allows you to download a folder of images from google drive or individual gdrive image ids. It will then fintune the model on these images so you can run inference against them. This example will overwrite the model each time you upload new files.
+This example allows you to download a folder of images from google drive or individual gdrive image ids. It is suggested to upload 10-12 images to a Gdrive folder and make sure you set sharing to 'Anyone with the link' and copy the link. The toy API will then finetune the model on these images so you can run inference against them. This example will overwrite the model each time you upload new files.
 
-- Setup your instance as above but with a machine with more than 16GB ram, the smallest on AWS would be m5.2xlarge. (see [Huggingface dreambooth](https://huggingface.co/docs/diffusers/training/dreambooth)).
+- Setup your instance as above but with a machine with **at least** 16GB ram, the smallest on AWS would be m5.2xlarge. (see [Huggingface dreambooth](https://huggingface.co/docs/diffusers/training/dreambooth)).
 - Use the following docker command:
 
 ```bash
@@ -148,7 +150,7 @@ To start finetuning use a query like below:
 }
 ```
 
-This query will take around five minutes while the model is tuned and readied for inference.
+This query will take around five minutes while the model is tuned and prepared for inference.
 
 To infer:
 
