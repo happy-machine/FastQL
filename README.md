@@ -27,7 +27,7 @@ We've observed about a **2x speed up** across the example schema vs a FastAPI/Ar
 - Because ML models are typically sequential in terms of request response pattern, requests to the model are **always** blocking,response time is the important bottleneck FastQL is focused on reducing.
 <br/>
 
-## Installation (Linux any, Mac & Mac M, Windows)
+## Installation (Linux any, Mac, Mac M1, Windows)
 
 ```bash
 pip install fastqlapi
