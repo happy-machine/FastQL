@@ -2,7 +2,7 @@
 
 # FastQL Inference Server
 
-Spin up a blazing fast Rust GraphQL query API around your ML model in one line of Python code.
+### Spin up a blazing fast Rust GraphQL query API around your ML model in one line of Python code.
 
 Included are examples which can deploy and serve stable diffusion / runwayml / midjourney or any of the [Hugging face](https://huggingface.co/) diffusers models in seconds.
 
@@ -25,8 +25,9 @@ We've observed about a **2x speed up** across the example schema vs a FastAPI/Ar
 - FastlQL is [Apollo federation](https://www.apollographql.com/docs/federation/#:~:text=Apollo%20Federation%20is%20a%20powerful,subgraph) compliant, which means that you can aggregate many models into a single curated API using schema stitching. This means you can maintain both fixed and dynamic schema's for params to your models, so it is easy to test new features and benefit from federation versioning.
 - FastQL gives you GraphQL playground for testing and demonstrating your prototype models.
 - Because ML models are typically sequential in terms of request response pattern, requests to the model are **always** blocking,response time is the important bottleneck FastQL is focused on reducing.
+<br/>
 
-## Installation
+## Installation (Linux any, Mac, Mac M1, Windows)
 
 ```bash
 pip install fastqlapi
@@ -59,9 +60,8 @@ Will spin up the below GraphQL Playground ready for requests on localhost:8000/g
 }
 ```
 
-<img src="assets/playground-screenshot.png" width="1000" height="600">
+<img src="assets/Playground-screenshot.png" width="1000" height="600">
 
-<br/>
 <br/>
 
 ### Spin up an example hugging face diffusers GraphQL API using Docker on AWS EC2
@@ -120,7 +120,8 @@ You can change MODEL_ID to one of the following to try a different diffusers mod
 The example API surfaces prompt, number_of_images, guidance_scale, number_inference_steps and seed and returns an array of images or a seed.
 
 The example uses a ruby webserver to serve up the content of an images directory which it will deposit generated images into on port 8080.
-
+<br/>
+<br/>
 ### A diffusers example implementing fine tuning using dreambooth
 
 **NB. Mutation support coming soon.**
