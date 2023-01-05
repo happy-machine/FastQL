@@ -2,7 +2,7 @@
 
 # FastQL Inference Server
 
-### Spin up a blazing fast Rust GraphQL query API around your ML model in one line of Python code.
+### Spin up a blazing fast Rust GraphQL query API to prototype your ML model in one line of Python code.
 
 Included are examples which can deploy and serve stable diffusion / runwayml / midjourney or any of the [Hugging face](https://huggingface.co/) diffusers models in seconds.
 
@@ -13,7 +13,7 @@ We've observed about a **2x speed up** across the example schema vs a FastAPI/Ar
 - **Does not include an auth mechanism, you can implement auth using an API Gateway or auth proxy**.
 - Can only create flat / non nested schema, currently only a single query, support for subscription and mutation coming soon.
 - Make sure you set RUST_ENV to production if you are using it on a remote machine.
-- This is currently a prototype and should not be used in production.
+- This is currently a prototype and should not be used in production. It is perfect for prototyping and sharing your models.
 
 <br/>
 
