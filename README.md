@@ -1,4 +1,4 @@
-<img src="https://i.imgur.com/Ax2XabX.jpeg"  width="200" height="200">
+<img src="assets/fastql-logo.png" width="60" height="80">
 
 # FastQL Inference Server
 
@@ -224,6 +224,7 @@ No Rust logs | default false
 Turn on Apollo tracing | default false
 
 <br/>
+<img src="https://i.imgur.com/Ax2XabX.jpeg"  width="400" height="400">
 
 ## License
 
