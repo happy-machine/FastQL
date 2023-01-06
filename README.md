@@ -25,6 +25,7 @@ We've observed about a **2x speed up** across the example schema vs a FastAPI/Ar
 - FastlQL is [Apollo federation](https://www.apollographql.com/docs/federation/#:~:text=Apollo%20Federation%20is%20a%20powerful,subgraph) compliant, which means that you can aggregate many models into a single curated API using schema stitching. This means you can maintain both fixed and dynamic schema's for params to your models, so it is easy to test new features and benefit from federation versioning. You can also use federation to curate, version and productionise a supergraph API.
 - FastQL gives you GraphQL playground for testing and demonstrating your prototype models.
 - Because ML models are typically sequential in terms of request response pattern, requests to the model are **always** blocking,response time is the important bottleneck FastQL is focused on reducing.
+- A Rust server is free of pythons GIL lock and doesn't suffer from Go's ["buffering issues"](https://discord.com/blog/why-discord-is-switching-from-go-to-rust)
 <br/>
 
 ## Installation (Linux any, Mac, Mac M1, Windows)
