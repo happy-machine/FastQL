@@ -1,4 +1,4 @@
-<img src="assets/fastql-logo.png" width="60" height="80">
+<img src="https://imgur.com/gallery/jZf8C3v" width="60" height="80">
 
 # FastQL Inference Server
 
