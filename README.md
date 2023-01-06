@@ -10,7 +10,7 @@ We've observed about a **2x speed up** across the example schema vs a FastAPI/Ar
 
 **Please note**
 
-- **Does not include an auth mechanism, you can implement auth using an API Gateway or auth proxy**.
+- **Does not include an auth mechanism, you can implement auth using an API Gateway or auth proxy**, or using Apollo Federation.
 - Can only create flat / non nested schema, currently only a single query, support for subscription and mutation coming soon.
 - Make sure you set RUST_ENV to production if you are using it on a remote machine.
 - This is currently a prototype and should not be used in production. It is perfect for prototyping and sharing your models.
