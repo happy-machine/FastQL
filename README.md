@@ -1,4 +1,4 @@
-<img src="https://i.imgur.com/Ax2XabX.jpeg"  width="400" height="400">
+<img src="https://i.imgur.com/Ax2XabX.jpeg"  width="200" height="200">
 
 # FastQL Inference Server
 
