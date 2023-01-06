@@ -6,7 +6,7 @@
 
 Included are examples which can deploy and serve stable diffusion / runwayml / midjourney or any of the [Hugging face](https://huggingface.co/) diffusers models in seconds.
 
-We've observed about a **2x speed up** across the example schema vs a FastAPI/Ariadne Python GraphQL server with identical schema. This is because although the model code is in Python, the API is actually a Rust process running ActiX.
+We've observed about a **2x speed up** across the example schema vs a FastAPI/Ariadne Python GraphQL server with identical schema. This is because although the model code is in Python, the API is actually a Rust process running [TechEmpower](https://www.techempower.com/benchmarks/#section=data-r21&test=composite) no.5 fastest web framework [ActiX](https://actix.rs/).
 
 **Please note**
 
