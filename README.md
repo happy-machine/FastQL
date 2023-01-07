@@ -27,7 +27,7 @@ We've observed about a **2x speed up** across the example schema vs a FastAPI/Ar
 - FastQL gives you GraphQL playground for testing and demonstrating your prototype models.
 - Because ML models are typically sequential in terms of request response pattern, requests to the model are **always** blocking,response time is the important bottleneck FastQL is focused on reducing.
 - A Rust server is free of pythons GIL lock and doesn't suffer from Go's ["buffering issues"](https://discord.com/blog/why-discord-is-switching-from-go-to-rust)
-<br/>
+  <br/>
 
 ## Installation (Linux any, Mac, Mac M1, Windows)
 
@@ -78,7 +78,8 @@ Will spin up the below GraphQL Playground ready for requests on localhost:8000/g
 - Get your current IPV4 IP (for example from [whatsmyip](whatsmyip.org))
 - In the security tab for your instance select the auto-created or chosen security group and add an inbound rule setting custom TCP and port 8000 (graphql api) with source to {{Your IPV4 IP}} (or 0.0.0.0/0 to make it public) and another identical rule for port 8080 (the image server)
 - Sign up at https://huggingface.co/ to get your free ACCESS_TOKEN.
-- Setup aws configure with the command aws configure and enter access key details after creating an access key in the IAM panel.
+- Create an access key in the IAM panel.
+- Setup aws configure with the command aws configure and enter access key details.
 - Run the following commands to set your public IP:
 
 ```bash
@@ -124,6 +125,7 @@ The example API surfaces prompt, number_of_images, guidance_scale, number_infere
 The example uses a ruby webserver to serve up the content of an images directory which it will deposit generated images into on port 8080.
 <br/>
 <br/>
+
 ### A diffusers example implementing fine tuning using dreambooth
 
 **NB. Mutation support coming soon.**
@@ -169,7 +171,7 @@ To infer:
 
 ## Further info
 
-- FastQL currently implements Int, Float, String, ID and array and required versions of those types and not currently
+- FastQL currently implements Int, Float, String, ID and array and required versions of those types but not currently
   required subtypes (an element of a list).
 
 - Under the hood FastQL uses the ActiX Rust web server which is currently no.5 fastest web framework according to [Tech Empower](https://www.techempower.com/benchmarks/#section=data-r21&test=composite). By comparison, Python's [FastAPI](https://fastapi.tiangolo.com/) is at no.93. We've observed about a 2x speed up across the example schema here vs a FastAPI/Ariadne Python GraphQL server with the same schema.
@@ -236,3 +238,5 @@ The folks at [Hugging Face](https://huggingface.co/) \
 The team at [Actix](https://actix.rs/) \
 Sunli @ [Async-graphql.rs](https://github.com/async-graphql/async-graphql) \
 The team at [Maturin](https://github.com/PyO3/maturin)
+
+#### This is a passion project, we'd love your help, please message me on Twitter @djfreshuk!
