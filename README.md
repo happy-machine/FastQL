@@ -169,7 +169,7 @@ To infer:
 
 ## Further info
 
-- FastQL implements all the basic GraphQL types and array types, including required types but not currently
+- FastQL currently implements Int, Float, String, ID and array and required versions of those types and not currently
   required subtypes (an element of a list).
 
 - Under the hood FastQL uses the ActiX Rust web server which is currently no.5 fastest web framework according to [Tech Empower](https://www.techempower.com/benchmarks/#section=data-r21&test=composite). By comparison, Python's [FastAPI](https://fastapi.tiangolo.com/) is at no.93. We've observed about a 2x speed up across the example schema here vs a FastAPI/Ariadne Python GraphQL server with the same schema.
