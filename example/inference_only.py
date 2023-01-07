@@ -10,7 +10,7 @@ pipe = StableDiffusionPipeline.from_pretrained(model_id, scheduler=scheduler, to
 pipe = pipe.to("cuda")
 
 def infer(**kwargs):
-  seed = kwargs.get('seed', random.getrandbits(32))
+  seed = kwargs.get('seed', torch.random.seed())
   images = pipe(
     [kwargs['prompt']] * kwargs.get('number_of_images', 1),
     guidance_scale=kwargs.get('guidance_scale', 7.5),
@@ -36,6 +36,7 @@ fastql_server.start(callback=infer, query_name="Model",
     },
     "number_of_images": {
       "type": "Int",
+      "description": "The number of images to generate"
     },
     "seed": {
       "type": "Int",
@@ -43,16 +44,20 @@ fastql_server.start(callback=infer, query_name="Model",
     },
     "guidance_scale": {
       "type": "Float",
+      "description": "A parameter that controls how much the image generation process follows the text prompt"
     },
     "number_inference_steps": {
       "type": "Float",
+      "des  cription": "The number of inference steps to run, the higher the number the more detailed the image will be"
     }
   }, 
   fields={
     "images": {
-      "type": "[String]"
+      "type": "[String]",
+      "Description": "A list of urls to the generated images"
     },
     "seed": {
-      "type": "Int"
+      "type": "Int",
+      "Description": "The seed used to generate the images"
     },
  })
