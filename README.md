@@ -186,12 +186,6 @@ Default localhost
 **GRAPHQL_PORT**
 Default 8000
 
-**MODEL_ID**
-The diffusers model ID for the huggingface diffusers model you want to launch
-
-**ACCESS_TOKEN**
-Your huggingface diffusers access token
-
 **ENABLE_GRAPHIQL**
 Will enable GraphiQL | default to true unless RUST_ENV is set to production (in which case setting ENABLE_GRAPHIQL=true will still overide)
 
@@ -212,6 +206,9 @@ default false
 
 **MAX_AGE_HEADER**
 default 3600
+
+**RUST_ENV**
+default 'development'
 
 **RUST_LOG**
 Rust log level | default 'debug'
