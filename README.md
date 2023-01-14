@@ -2,7 +2,7 @@
 
 # FastQL Inference Server
 
-### Spin up a blazing fast Rust GraphQL query API to prototype your ML model in one line of Python code.
+### Spin up a blazing fast Rust GraphQL API to serve your ML model in one line of Python code.
 
 Included are examples which can deploy and serve stable diffusion / runwayml / midjourney or any of the [Hugging face](https://huggingface.co/) diffusers models in seconds.
 
