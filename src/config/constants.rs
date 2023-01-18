@@ -54,7 +54,7 @@ fn get_bool_default_true(env_var: &String) -> bool {
                 return true;
             }
         },
-        Err(e) => return false,
+        Err(e) => return true,
     }
 }
 
