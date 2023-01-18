@@ -59,7 +59,7 @@ pub async fn start_server(query: Object, model: Object) -> std::io::Result<()> {
   let schema_temp = schema.unwrap();
 
   HttpServer::new(move || {
-    let cors = if env.enable_cors {
+    let cors = if env.cors_permissive {
       Cors::permissive()
     } else {
       Cors::default()
