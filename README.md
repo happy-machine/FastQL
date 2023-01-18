@@ -35,6 +35,11 @@ We've observed about a **2x speed up** across the example schema vs a FastAPI/Ar
 pip install fastqlapi
 ```
 
+turn CORS on with:
+```bash
+export ENABLE_CORS=true
+```
+
 ## Usage
 
 You can call **any** callback with each GraphQL query recieved by the server, the callback must return a dict with values for each field you wish to return. The returned type must match the type defined for the field in the fields dict given to the start method (see below).
