@@ -35,11 +35,6 @@ We've observed about a **2x speed up** across the example schema vs a FastAPI/Ar
 pip install fastqlapi
 ```
 
-turn CORS on with:
-```bash
-export ENABLE_CORS=true
-```
-
 ## Usage
 
 You can call **any** callback with each GraphQL query recieved by the server, the callback must return a dict with values for each field you wish to return. The returned type must match the type defined for the field in the fields dict given to the start method (see below).
@@ -194,11 +189,9 @@ Default 8000
 **ENABLE_GRAPHIQL**
 Will enable GraphiQL | default to true unless RUST_ENV is set to production (in which case setting ENABLE_GRAPHIQL=true will still overide)
 
-**ENABLE_CORS**
-default false
 
 **CORS_PERMISSIVE**
-Should be used in Development/Test only, allows all headers and origins, credentials supported, maximum age 1 hour does not send wildcard | default false
+Should be used in Development/Test only, allows all headers and origins, credentials supported, maximum age 1 hour does not send wildcard | default true
 
 **ALLOW_AUTHORIZATION_HEADER**
 default false
