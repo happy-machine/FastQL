@@ -42,7 +42,20 @@ fn get_bool(env_var: &String) -> bool {
         },
         Err(e) => return false,
     }
+}
 
+
+fn get_bool_default_true(env_var: &String) -> bool {
+    match env::var(env_var){
+        Ok(v) => {
+            if v == "false".to_string() {
+                return false;
+            } else {
+                return true;
+            }
+        },
+        Err(e) => return false,
+    }
 }
 
 fn set_graphiql() -> bool {
@@ -75,7 +88,7 @@ pub fn get_env() -> Env {
         rust_quiet: get_bool(&"RUST_QUIET".to_string()),
         tracing: get_bool(&"TRACING".to_string()),
         enable_graphiql: set_graphiql(),
-        cors_permissive: get_bool(&"CORS_PERMISSIVE".to_string()),
+        cors_permissive: get_bool_default_true(&"CORS_PERMISSIVE".to_string()),
         allowed_origin_header: env::var("ALLOWED_ORIGIN_HEADER").unwrap_or("*".to_string()),
         max_age_header: env::var("MAX_AGE_HEADER").unwrap_or("3600".to_string()).parse().unwrap(),
         allow_authorization_header: get_bool(&"ALLOW_AUTHORIZATION_HEADER".to_string()),
