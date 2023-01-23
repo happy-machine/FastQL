@@ -115,6 +115,9 @@ Once Docker has finished installing...
 You can change MODEL_ID to one of the following to try a different diffusers model for example:
 
 ```python
+"Mitsua/mitsua-diffusion-cc0"```
+This is recommended as it trained on totally public images, there is some controversy over the legality of the models below (be warned!)
+```python
 "CompVis/stable-diffusion-v1-4"
 "stabilityai/stable-diffusion-2"
 "runwayml/stable-diffusion-v1-5"
