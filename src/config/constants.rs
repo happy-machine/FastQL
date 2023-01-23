@@ -20,10 +20,10 @@ fn create_url() -> String {
     let graphql_host = env::var("GRAPHQL_HOST").unwrap_or("localhost".to_string())
     if graphql_host == "localhost".to_string() && rust_env == "production".to_string() {
         return format!("0.0.0.0:{}", port);
-    } else if  v == "localhost".to_string() {
+    } else if graphql_host == "localhost".to_string() {
         return format!("127.0.0.1:{}", port);
     } else {
-       return v;
+       return format!("{}:{}", graphql_host, port);
     }
 }
 
