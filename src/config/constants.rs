@@ -25,6 +25,7 @@ fn create_url() -> String {
     } else {
        return format!("{}:{}", graphql_host, port);
     }
+  }
 }
 
 fn get_bool(env_var: &String) -> bool {
