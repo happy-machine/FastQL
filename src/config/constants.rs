@@ -17,7 +17,7 @@ pub struct Env {
 fn create_url() -> String {
     let port = env::var("GRAPHQL_PORT").unwrap_or("8000".to_string());
     let rust_env = env::var("RUST_ENV").unwrap_or("development".to_string());
-    let graphql_host = env::var("GRAPHQL_HOST").unwrap_or("localhost".to_string())
+    let graphql_host = env::var("GRAPHQL_HOST").unwrap_or("localhost".to_string());
     if graphql_host == "localhost".to_string() && rust_env == "production".to_string() {
         return format!("0.0.0.0:{}", port);
     } else if graphql_host == "localhost".to_string() {
@@ -25,7 +25,6 @@ fn create_url() -> String {
     } else {
        return format!("{}:{}", graphql_host, port);
     }
-  }
 }
 
 fn get_bool(env_var: &String) -> bool {
