@@ -17,17 +17,13 @@ pub struct Env {
 fn create_url() -> String {
     let port = env::var("GRAPHQL_PORT").unwrap_or("8000".to_string());
     let rust_env = env::var("RUST_ENV").unwrap_or("development".to_string());
-    match env::var("GRAPHQL_HOST"){
-        Ok(v) => {
-            if v == "localhost".to_string() && rust_env == "production".to_string() {
-                return format!("0.0.0.0:{}", port);
-            } else if  v == "localhost".to_string() {
-                return format!("127.0.0.1:{}", port);
-            } else {
-                return v;
-            }
-        },
-        Err(e) => return format!("127.0.0.1:{}", port),
+    let graphql_host = env::var("GRAPHQL_HOST").unwrap_or("localhost".to_string())
+    if graphql_host == "localhost".to_string() && rust_env == "production".to_string() {
+        return format!("0.0.0.0:{}", port);
+    } else if  v == "localhost".to_string() {
+        return format!("127.0.0.1:{}", port);
+    } else {
+       return v;
     }
 }
 
